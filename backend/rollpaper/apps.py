@@ -4,3 +4,5 @@ from django.apps import AppConfig
 class RollpaperConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'rollpaper'
+
+# 수정test
