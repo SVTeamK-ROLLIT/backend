@@ -10,17 +10,17 @@ class User(models.Model):
     email = models.EmailField(max_length=100,unique=True) #유효한 이메일 주소인지 체크하는 필드, 체크하는데 EmailValidator를 사용
     nickname = models.CharField(max_length=20)
     password = models.CharField(max_length=20)
-    create_at = models.DateTimeField()
-    update_at = models.DateTimeField() #이것도 디폴트 값
-    is_deleted = models.IntegerField() #디폴트 값을 뭐로 할지 생각
+    create_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True) #나중에 문제 생기면 null=False 검색 ㄱㄱ
+    is_deleted = models.IntegerField(default=1) #0은 삭제된 상태로 가정
 
 class Paper(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE) #user_id로 저장
-    backimage_url = models.URLField(max_length=100)
+    paper_url = models.URLField(max_length=100)
     title = models.CharField(max_length=20)
-    create_at = models.DateTimeField()
-    update_at = models.DateTimeField()
-    is_deleted = models.IntegerField() 
+    create_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
+    is_deleted = models.IntegerField(default=1) 
 
 class Font(models.Model):
     font_type = models.CharField(max_length=20) 
@@ -38,9 +38,9 @@ class Memo(models.Model):
     ycoor = models.IntegerField() 
     rotate = models.IntegerField() 
     password = models.CharField(max_length=20) 
-    create_at = models.DateTimeField() 
-    update_at = models.DateTimeField() 
-    is_deleted = models.IntegerField #혹은 models.BooleanField
+    create_at = models.DateTimeField(auto_now_add=True) 
+    update_at = models.DateTimeField(auto_now=True) 
+    is_deleted = models.IntegerField(default=1) #혹은 models.BooleanField
 
 
 
@@ -51,9 +51,9 @@ class Image(models.Model):
     ycoor = models.IntegerField() 
     rotate = models.IntegerField() 
     password = models.CharField(max_length=20)
-    create_at = models.DateTimeField()
-    update_at = models.DateTimeField()
-    is_deleted = models.IntegerField() 
+    create_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
+    is_deleted = models.IntegerField(default=1) 
 
 class DefaultSticker(models.Model):
     sticker_url = models.URLField(max_length=100)
