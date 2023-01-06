@@ -1,8 +1,8 @@
 from django.http import JsonResponse
 from django.shortcuts import render
 from .models import User
+from .models import Paper
 from rest_framework.decorators import api_view
-
 # Create your views here.
 @api_view(['POST']) 
 def login(request):
@@ -40,3 +40,26 @@ def sign_up(request): #이메일을 UK로 지정해서 같은 이메일로 요�
         user_id = result.id
         return JsonResponse({"user_id": user_id}, status=200)
 
+
+@api_view(['POST']) 
+def paper(request):
+    #TODO 1 프론트에서 정보 받아오기
+    user_id = request.data['user_id']
+    paper_url = request.data['paper_url']
+    title = request.data['title']
+    
+    #TODO 2 user_id를 탐색키로 유저 객체 반환, 이거를 paper의 외래키로 넣어줘야 함
+    user = User.objects.get(pk=user_id)
+
+    # #TODO 3 paper 테이블 Title로 탐색해서 같은 Title을 가지면 다른 제목을 입력해 주세요 반환
+    # papers = Paper.objects.all()
+    # if papers.filter(user=user).filter(title=title): #압력 받은 title이 이미 존재하면 "이미 있어요!" 반환
+    #      return JsonResponse({"message": "already existing title"}, status=400)
+    
+
+    #TODO 4 paper 생성
+    new_paper = Paper.objects.create(user=user, paper_url=paper_url, title=title)
+
+    #TODO 5 paper_id를 JSON형식으로 만들기
+    new_paper_id = {"paper_id":new_paper.id}
+    return JsonResponse(new_paper_id, status=200)
