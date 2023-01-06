@@ -11,8 +11,10 @@ class User(models.Model):
     nickname = models.CharField(max_length=20)
     password = models.CharField(max_length=20)
     create_at = models.DateTimeField(auto_now_add=True)
+
     update_at = models.DateTimeField(auto_now=True) #나중에 문제 생기면 null=False 검색 ㄱㄱ
     is_deleted = models.IntegerField(default=1) #0은 삭제된 상태로 가정
+
 
 class Paper(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE) #user_id로 저장
@@ -21,6 +23,7 @@ class Paper(models.Model):
     create_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
     is_deleted = models.IntegerField(default=1) 
+
 
 class Font(models.Model):
     font_type = models.CharField(max_length=20) 
