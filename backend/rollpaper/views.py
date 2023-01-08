@@ -1,8 +1,11 @@
 from django.http import JsonResponse
 from django.shortcuts import render
-from .models import User
-from .models import Paper
+from .models import User, Paper, Image
 from rest_framework.decorators import api_view
+import boto3
+from botocore.client import Config
+from backend.settings import AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
+from backend.settings import AWS_BUCKET_REGION, AWS_STORAGE_BUCKET_NAME
 # Create your views here.
 @api_view(['POST']) 
 def login(request):
@@ -63,3 +66,32 @@ def paper(request):
     #TODO 5 paper_id를 JSON형식으로 만들기
     new_paper_id = {"paper_id":new_paper.id}
     return JsonResponse(new_paper_id, status=200)
+
+@api_view(['POST']) 
+def photo(request,paper_id):
+    paper = Paper.objects.get(pk=paper_id) #paper_id는 url을 통해서 들어옴
+    xcoor = request.data['xcoor']
+    ycoor = request.data['ycoor']
+    rotate = request.data['rotate']
+    password = request.data['password']
+    image = request.data['image'] # 우리가 DB에 저장할 때는 url을 넣어줄거야 url은 s3버킷에서 받아와
+
+    #TODO 1 사진을 s3 버킷에 올리기
+    s3=boto3.resource( #S3 버킷 등록하기
+        's3',
+        aws_access_key_id = AWS_ACCESS_KEY_ID,
+        aws_secret_access_key = AWS_SECRET_ACCESS_KEY,
+        config = Config(signature_version='s3v4') #이건 뭘까
+    )
+    s3.Bucket(AWS_STORAGE_BUCKET_NAME).put_object(Key=image.name, Body=image, ContentType='image/jpg')
+   
+    #TODO 2 사진 url을 받아옴
+    image_url = f"https://sangwon-bucket.s3.ap-northeast-1.amazonaws.com/{image.name}"
+
+    #TODO 3 DB에 저장
+    new_photo = Image.objects.create(paper=paper, image_url=image_url, password=password,
+    xcoor=xcoor, ycoor=ycoor, rotate=rotate)
+    
+    url = {"image_url":image_url}
+    return JsonResponse({"message": "photo added"}, status=200)
+    

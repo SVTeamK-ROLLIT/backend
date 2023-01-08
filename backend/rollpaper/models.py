@@ -49,7 +49,7 @@ class Memo(models.Model):
 
 class Image(models.Model):
     paper = models.ForeignKey(Paper,on_delete=models.CASCADE) #paper_id로 저장
-    image_url = models.URLField(max_length=100)
+    image_url = models.FileField(max_length=200) #블로그 참고로 imageFiled -> FileField로 수정
     xcoor = models.IntegerField() 
     ycoor = models.IntegerField() 
     rotate = models.IntegerField() 
