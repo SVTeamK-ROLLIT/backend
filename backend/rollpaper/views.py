@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from django.shortcuts import render
-from .models import User, Paper, Image, Font, Color, Memo
+from .models import User, Paper, Image, Font, Color, Memo, DefaultSticker, Sticker
 from rest_framework.decorators import api_view
 import boto3
 from botocore.client import Config
@@ -115,4 +115,19 @@ def memo(request,paper_id):
     return JsonResponse({"message": "memo created"}, status=200)
     
     
-    
+@api_view(['POST']) 
+def memo_delete(request,memo_id):
+    #TODO 1: 메모지 가져오기
+    memo = Memo.objects.get(pk=memo_id)
+        
+    #TODO 2: 입력한 비밀번호와 메모의 비밀번호가 일치하는지 확인
+    if memo.password == request.data['password']:
+        memo.is_deleted = 0 
+        memo.save()
+        return JsonResponse({"is_deleted":memo.is_deleted}, status=200)
+    else:
+        return JsonResponse({"message": "delete fail"}, status=400)
+
+    #Postman으로 잘못된 비밀번호 입력 시 확인했고 
+    #비밀번호 맞을 시 DB에서 is_deleted값이 0으로 변하는 것 확인했습니다
+
