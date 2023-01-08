@@ -59,11 +59,13 @@ class Image(models.Model):
     is_deleted = models.IntegerField(default=1) 
 
 class DefaultSticker(models.Model):
-    sticker_url = models.URLField(max_length=100)
+    sticker_url = models.URLField(max_length=500) #url이 너무 길어서 글자 제한 늘림
 
 class Sticker(models.Model):
     paper = models.ForeignKey(Paper,on_delete=models.CASCADE) #paper_id로 저장
-    default_sticker_id = models.ForeignKey(DefaultSticker,on_delete=models.CASCADE)
+    default_sticker = models.ForeignKey(DefaultSticker,on_delete=models.CASCADE) #id를 빼줌
     xcoor = models.IntegerField() 
     ycoor = models.IntegerField() 
     rotate = models.IntegerField() 
+    password = models.CharField(max_length=20, null=True, default='') #구현하면서 추가
+    
