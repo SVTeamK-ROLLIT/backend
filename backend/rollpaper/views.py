@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from django.shortcuts import render
-from .models import User, Paper, Image
+from .models import User, Paper, Image, Font, Color, Memo
 from rest_framework.decorators import api_view
 import boto3
 from botocore.client import Config
@@ -94,4 +94,25 @@ def photo(request,paper_id):
     
     url = {"image_url":image_url}
     return JsonResponse({"message": "photo added"}, status=200)
+    
+@api_view(['POST']) 
+def memo(request,paper_id):
+    paper = Paper.objects.get(pk=paper_id)
+    font = Font.objects.get(font_type=request.data['font']) #폰트랑 색깔이 삭제되면 메모도 사라져
+    color = Color.objects.get(color_type=request.data['color']) #color_id로 저장
+    content = request.data['content']
+    nickname = request.data['nickname'] 
+    xcoor = request.data['xcoor']
+    ycoor = request.data['ycoor'] 
+    rotate = request.data['rotate'] 
+    password = request.data['password']
+    #TODO 1 font랑 Color 테이블에 데이터 만들기(로컬에)
+
+    #TODO 2 메모지 만들기
+    new_memo = Memo.objects.create(paper=paper, font=font, color=color, content=content,
+    nickname=nickname, xcoor=xcoor, ycoor=ycoor, rotate=rotate, password=password)
+
+    return JsonResponse({"message": "memo created"}, status=200)
+    
+    
     
