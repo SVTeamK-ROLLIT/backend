@@ -124,8 +124,7 @@ def memo_delete(request,memo_id):
     if memo.password == request.data['password']:
         memo.is_deleted = 0 
         memo.save()
-        return JsonResponse({"message": "memo created","is_deleted":memo.is_deleted
-        }, status=200)
+        return JsonResponse({"is_deleted":memo.is_deleted}, status=200)
     else:
         return JsonResponse({"message": "delete fail"}, status=400)
 
