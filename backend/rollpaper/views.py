@@ -151,25 +151,16 @@ def stickers(request,paper_id):
     
     #실패하는 케이스는 생각을 못했고 사진을 가리면 안되는 느낌으로 추가구현하면 좋을 거 같습니다
 
-#로직
-#1. user_id를 받는다.
-#2. user_id에 해당하는 User 테이블의 email, nickname를 가져온다 -> filter.only 사용
-#3. user_id에 해당하는 Paper 테이블의 title, paper_url, create_at을 가져온다.
-#4. 가져온 테이블 정보를 하나의 리스트 또는 배열로 묶는다.
-#5. user_id와 데이터 모음을 status=200과 함께 반환한다.
-
 @api_view(['GET'])
-def my_page(request, user_id): #create_at을 문자열 형식으로 바꿔보기, 오류 자체는 범용적인 오류
-   
-    now_user = User.objects.filter(id=user_id)
-    paper_id = Paper.objects.filter(user=user_id)
-    
-    paper_data = PaperSerializer(paper_id)
-    user_data = MyPageSerializer(now_user)
+def my_page(request, user_id):
+    dict={"user_data":[], "paper_data":[]}
+    for user_data in User.objects.filter(id=user_id):
+        json_user_part = UserSerializer(user_data)
+        dict['user_data'].append(json_user_part)
 
-    #user_data = User.objects.filter(id = id).only("email","nickname").values() #유저 DB에서 유저 id 가져오기
-    print(user_id)
-    print(user_data) # 쿼리셋으로 나오지 않게, 원하는 분류만 나오게 수정, 시리얼라이저 사용 필요
-    #paper_data = Paper.objects.filter(user=id).only("title","paper_url","create_at").values() # Paper DB에서 user 정보를 입력받은 id(사용자의 user_id)로 설정
+    for paper_data in Paper.objects.filter(user=user_id):
+        json_paper_part = PaperSerializer(paper_data)
+        dict['paper_data'].append(json_paper_part)
+
     
-    return JsonResponse({"data":user_data}, status=200)
+    return JsonResponse(dict, safe=False)

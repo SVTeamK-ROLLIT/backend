@@ -2,18 +2,18 @@ from rest_framework import serializers
 from .models import *
 from rest_framework.serializers import ModelSerializer
 
-class BaseUserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ('id','email','nickname','password','create_at','update_at','is_deleted')
+#상원님 시리얼라이저를 참고하여 작성
+def UserSerializer(user_data):
+    dic = {}
+    dic['id'] = user_data.id
+    dic['email'] = user_data.email
+    dic['nickname'] = user_data.nickname
+    return dic
 
-class PaperSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Paper
-        fields = ('id', 'title','paper_url','create_at', 'is_deleted')
-
-class MyPageSerializer(serializers.ModelSerializer):
-   paper = PaperSerializer(many=True)
-   class Meta:
-        model = User
-        fields = ('id', 'email', 'nickname','paper')
+def PaperSerializer(paper_data):
+    dic = {}
+    dic['id'] = paper_data.id
+    dic['title'] = paper_data.title
+    dic['paper_url'] = paper_data.paper_url
+    dic['create_at'] = paper_data.create_at
+    return dic
