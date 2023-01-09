@@ -7,6 +7,8 @@ from botocore.client import Config
 from backend.settings import AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
 from backend.settings import AWS_BUCKET_REGION, AWS_STORAGE_BUCKET_NAME
 from .serializers import *
+
+
 # Create your views here.
 @api_view(['POST']) 
 def login(request):
@@ -157,15 +159,17 @@ def stickers(request,paper_id):
 #5. user_id와 데이터 모음을 status=200과 함께 반환한다.
 
 @api_view(['GET'])
-def my_page(request, id):
-    now_user = User.objects.get(id=id)
-    paper_id = Paper.objects.get(user_id=id)
-    paper_data = PaperSerializer(id=paper_id)
-
+def my_page(request, user_id): #create_at을 문자열 형식으로 바꿔보기, 오류 자체는 범용적인 오류
+   
+    now_user = User.objects.filter(id=user_id)
+    paper_id = Paper.objects.filter(user=user_id)
+    
+    paper_data = PaperSerializer(paper_id)
     user_data = MyPageSerializer(now_user)
 
     #user_data = User.objects.filter(id = id).only("email","nickname").values() #유저 DB에서 유저 id 가져오기
-    print(type(user_data)) # 쿼리셋으로 나오지 않게, 원하는 분류만 나오게 수정, 시리얼라이저 사용 필요
+    print(user_id)
+    print(user_data) # 쿼리셋으로 나오지 않게, 원하는 분류만 나오게 수정, 시리얼라이저 사용 필요
     #paper_data = Paper.objects.filter(user=id).only("title","paper_url","create_at").values() # Paper DB에서 user 정보를 입력받은 id(사용자의 user_id)로 설정
     
-    return JsonResponse({"user_id":now_user,"user_data":user_data}, status=200)
+    return JsonResponse({"data":user_data}, status=200)
