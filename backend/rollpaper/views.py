@@ -1,11 +1,12 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
-from .models import User, Paper, Image, Font, Color, Memo, DefaultSticker, Sticker
+from .models import *
 from rest_framework.decorators import api_view
 import boto3
 from botocore.client import Config
 from backend.settings import AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
 from backend.settings import AWS_BUCKET_REGION, AWS_STORAGE_BUCKET_NAME
+from .serializers import *
 # Create your views here.
 @api_view(['POST']) 
 def login(request):
@@ -147,3 +148,24 @@ def stickers(request,paper_id):
     return JsonResponse({"message": "sticker added"}, status=201)
     
     #실패하는 케이스는 생각을 못했고 사진을 가리면 안되는 느낌으로 추가구현하면 좋을 거 같습니다
+
+#로직
+#1. user_id를 받는다.
+#2. user_id에 해당하는 User 테이블의 email, nickname를 가져온다 -> filter.only 사용
+#3. user_id에 해당하는 Paper 테이블의 title, paper_url, create_at을 가져온다.
+#4. 가져온 테이블 정보를 하나의 리스트 또는 배열로 묶는다.
+#5. user_id와 데이터 모음을 status=200과 함께 반환한다.
+
+@api_view(['GET'])
+def my_page(request, id):
+    now_user = User.objects.get(id=id)
+    paper_id = Paper.objects.get(user_id=id)
+    paper_data = PaperSerializer(id=paper_id)
+
+    user_data = MyPageSerializer(now_user)
+
+    #user_data = User.objects.filter(id = id).only("email","nickname").values() #유저 DB에서 유저 id 가져오기
+    print(type(user_data)) # 쿼리셋으로 나오지 않게, 원하는 분류만 나오게 수정, 시리얼라이저 사용 필요
+    #paper_data = Paper.objects.filter(user=id).only("title","paper_url","create_at").values() # Paper DB에서 user 정보를 입력받은 id(사용자의 user_id)로 설정
+    
+    return JsonResponse({"user_id":now_user,"user_data":user_data}, status=200)
