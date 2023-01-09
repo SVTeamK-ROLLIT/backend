@@ -131,3 +131,19 @@ def memo_delete(request,memo_id):
     #Postman으로 잘못된 비밀번호 입력 시 확인했고 
     #비밀번호 맞을 시 DB에서 is_deleted값이 0으로 변하는 것 확인했습니다
 
+#구현방식 : 프론트에서 어느 페이퍼인지에대한 정보를 받아서 스티커에 저장한다.
+@api_view(['POST']) 
+def stickers(request,paper_id):
+    xcoor = request.data['xcoor']
+    ycoor = request.data['ycoor']
+    rotate = request.data['rotate']
+    paper = Paper.objects.get(pk=paper_id)
+    password = request.data['password']
+    #스티커 저장소에서 스티커를 받아옴 여기에 스티커 url 있음
+    default_sticker = DefaultSticker.objects.get(pk=request.data['default_sticker_id'])
+    #스티커 컬럼을 만드는 재료로 스터커 저장소에서 가져온 객체가 필요(위의 변수)
+    new_sticker = Sticker.objects.create(default_sticker=default_sticker, password=password, xcoor=xcoor, 
+    ycoor=ycoor, rotate=rotate, paper=paper)
+    return JsonResponse({"message": "sticker added"}, status=201)
+    
+    #실패하는 케이스는 생각을 못했고 사진을 가리면 안되는 느낌으로 추가구현하면 좋을 거 같습니다
