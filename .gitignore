@@ -313,6 +313,4 @@ poetry.toml
 # End of https://www.toptal.com/developers/gitignore/api/django,python,macos,visualstudiocode
 /backend/.env
 db.env
-
-backend/rollpaper/migrations
-
+/backend/rollpaper/migrations

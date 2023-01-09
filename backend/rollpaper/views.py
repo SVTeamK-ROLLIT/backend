@@ -1,12 +1,13 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
-from .models import User, Paper, Image, Font, Color, Memo, DefaultSticker, Sticker
+from .models import *
 from rest_framework.decorators import api_view
 import boto3
 from botocore.client import Config
 from backend.settings import AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
 from backend.settings import AWS_BUCKET_REGION, AWS_STORAGE_BUCKET_NAME
 from .serializers import *
+
 # Create your views here.
 @api_view(['POST']) 
 def login(request):
@@ -148,6 +149,19 @@ def stickers(request,paper_id):
     return JsonResponse({"message": "sticker added"}, status=201)
     
     #실패하는 케이스는 생각을 못했고 사진을 가리면 안되는 느낌으로 추가구현하면 좋을 거 같습니다
+
+@api_view(['GET'])
+def my_page(request, user_id):
+    dict={"user_data":[], "paper_data":[]}
+    for user_data in User.objects.filter(id=user_id):
+        json_user_part = UserSerializer(user_data)
+        dict['user_data'].append(json_user_part)
+
+    for paper_data in Paper.objects.filter(user=user_id):
+        json_paper_part = PaperSerializer(paper_data)
+        dict['paper_data'].append(json_paper_part)
+
+    return JsonResponse(dict, safe=False)
 
 @api_view(['GET'])
 def get_paper(request,user_id,paper_id): #user_id는 쓰나?
