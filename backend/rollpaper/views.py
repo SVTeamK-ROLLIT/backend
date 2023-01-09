@@ -184,3 +184,14 @@ def get_paper(request,user_id,paper_id): #user_id는 쓰나?
     # json_dict = json.dumps(dict, ensure_ascii=False)
      
     return JsonResponse(dict, safe=False )
+
+@api_view(['GET'])
+def get_stickers(request):
+    #스티커 객체를 가져온다
+    sticker_object = DefaultSticker.objects.all()
+    sticker_dict={"data":[]}
+    for sticker in sticker_object:
+        sticker_info_dict ={"default_sticker_id":sticker.id,
+        "sticker_url":sticker.sticker_url}
+        sticker_dict['data'].append(sticker_info_dict) 
+    return JsonResponse(sticker_dict, status=200, safe=False)
