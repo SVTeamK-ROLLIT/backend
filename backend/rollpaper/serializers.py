@@ -17,6 +17,7 @@ def PaperSerializer(paper_data):
     dic['title'] = paper_data.title
     dic['paper_url'] = paper_data.paper_url
     dic['create_at'] = paper_data.create_at
+    return dic
 
 #짝퉁 시리어라이즈 : 딕셔너리로 만들어 줌
 def memo_serializer(memo_queryset):
