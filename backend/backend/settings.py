@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'storages', #S3 버킷 추가하면서 같이 추가된 내용
     'corsheaders',
+    'drf_yasg',
     #apps
     'rollpaper.apps.RollpaperConfig'
     

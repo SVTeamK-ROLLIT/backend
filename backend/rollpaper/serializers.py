@@ -61,3 +61,39 @@ def sticker_serializer(sticker_queryset):
     dic['sticker_url'] = sticker_url
 
     return dic
+
+class LoginSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id','email','password')
+
+
+class SignUpSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('email','nickname','password')
+
+class MakePaperSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Paper
+        fields = ('user', 'paper_url','title','id')
+
+class PhotoSerializer(serializers.ModelSerializer):
+    class Meta: #paper_id는 views.py에서 입력받으므로 serializer에서는 넣지 않음
+        model = Image
+        fields = ('image_url','xcoor','ycoor','rotate','password')
+
+class MemoSerializer(serializers.ModelSerializer):
+    class Meta: #paper_id는 views.py에서 입력받으므로 serializer에서는 넣지 않음
+        model = Memo
+        fields = ('font','color','content','nickname','xcoor','ycoor','rotate','password')
+
+class MemoDeleteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Memo
+        fields = ('id','is_deleted')
+
+class StickerSerializer(serializers.ModelSerializer):
+    class Meta: #paper_id는 views.py에서 입력받으므로 serializer에서는 넣지 않음
+        model = Sticker
+        fields = ('xcoor','ycoor','rotate','password')
