@@ -314,3 +314,5 @@ poetry.toml
 /backend/.env
 db.env
 /backend/rollpaper/migrations
+
+/backend/rollpaper/migrations/0001_initial.py
