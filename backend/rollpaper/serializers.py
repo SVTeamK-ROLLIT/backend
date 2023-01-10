@@ -76,7 +76,7 @@ class SignUpSerializer(serializers.ModelSerializer):
 class MakePaperSerializer(serializers.ModelSerializer):
     class Meta:
         model = Paper
-        fields = ('user','paper_url','title','id')
+        fields = ('user', 'paper_url','title','id')
 
 class PhotoSerializer(serializers.ModelSerializer):
     class Meta: #paper_id는 views.py에서 입력받으므로 serializer에서는 넣지 않음

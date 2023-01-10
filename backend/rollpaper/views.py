@@ -40,9 +40,9 @@ def sign_up(request): #이메일을 UK로 지정해서 같은 이메일로 요�
     nickname = request.data['nickname']
     
     if User.objects.filter(email=request.data['email']).exists():
-        return JsonResponse({"message":"already signed email"}, status=204)
+        return JsonResponse({"message":"already signed email"}, status=400)
     elif User.objects.filter(nickname=request.data['nickname']).exists():
-            return JsonResponse({"message": "already use nickname"})
+            return JsonResponse({"message": "already use nickname"}, status=400)
     else:
         result = User.objects.create(email = email, password = password, nickname = nickname) # 회원가입이 완료된 데이터
         user_id = result.id
@@ -50,20 +50,19 @@ def sign_up(request): #이메일을 UK로 지정해서 같은 이메일로 요�
 
 @swagger_auto_schema(method="POST", request_body=MakePaperSerializer)
 @api_view(['POST']) 
-def paper(request):
+def paper(request, user_id):
     #TODO 1 프론트에서 정보 받아오기
-    user_id = request.data['user']
+    user = User.objects.get(pk=user_id)
     paper_url = request.data['paper_url']
     title = request.data['title']
     
     #TODO 2 user_id를 탐색키로 유저 객체 반환, 이거를 paper의 외래키로 넣어줘야 함
-    user = User.objects.get(pk=user_id)
+    #user = User.objects.get(pk=user_id)
 
     # #TODO 3 paper 테이블 Title로 탐색해서 같은 Title을 가지면 다른 제목을 입력해 주세요 반환
     # papers = Paper.objects.all()
     # if papers.filter(user=user).filter(title=title): #압력 받은 title이 이미 존재하면 "이미 있어요!" 반환
     #      return JsonResponse({"message": "already existing title"}, status=400)
-    
 
     #TODO 4 paper 생성
     new_paper = Paper.objects.create(user=user, paper_url=paper_url, title=title)

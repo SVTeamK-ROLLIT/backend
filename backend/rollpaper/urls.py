@@ -24,7 +24,7 @@ schema_view_v1 = get_schema_view(
 
 urlpatterns = [
     path('users/login', views.login),
-    path('users/papers',views.paper), #롤링페이퍼 만들기
+    path('users/<int:user_id>/papers',views.paper), #롤링페이퍼 만들기 <int:user_id> 추가함.
     path('users/signup',views.sign_up), #회원가입
     path('papers/<int:paper_id>/photos',views.photo),#사진 추가
     path('papers/<int:paper_id>/memos',views.memo), #메모 생성
