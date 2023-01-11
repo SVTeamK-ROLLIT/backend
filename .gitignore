@@ -315,4 +315,12 @@ poetry.toml
 db.env
 /backend/rollpaper/migrations
 
+
+### Redis ###
+# Ignore redis binary dump (dump.rdb) files
+
+*.rdb
+
+
 /backend/rollpaper/migrations/0001_initial.py
+

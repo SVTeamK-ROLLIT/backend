@@ -2,6 +2,7 @@ version: "3.8"
 
 volumes:
   mysql_data:
+  redisdata:
 
 services:
   mysqldb:
@@ -24,3 +25,15 @@ services:
       - "8080:8080"
     volumes:
       - ./backend:/app
+
+  redis:
+    container_name: redis_contain
+    hostname: redis
+    image: redis:latest
+    # environment:
+    #   - REDIS_PASSWORD='root'
+    ports:
+      - "6379:6379" #이건 맞는거 같아
+    volumes:
+      - 'redisdata:/data'    
+    #   - /usr/local/etc/redis/redis.conf
