@@ -8,6 +8,13 @@ from backend.settings import AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
 from backend.settings import AWS_BUCKET_REGION, AWS_STORAGE_BUCKET_NAME
 from .serializers import *
 from django.core.cache    import cache
+import logging
+import time 
+
+
+
+logger = logging.getLogger(__name__)
+
 
 # Create your views here.
 @api_view(['POST']) 
