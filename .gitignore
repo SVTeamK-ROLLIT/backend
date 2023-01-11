@@ -314,3 +314,9 @@ poetry.toml
 /backend/.env
 db.env
 /backend/rollpaper/migrations
+
+### Redis ###
+# Ignore redis binary dump (dump.rdb) files
+
+*.rdb
+
