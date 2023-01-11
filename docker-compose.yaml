@@ -24,3 +24,16 @@ services:
       - "8080:8080"
     volumes:
       - ./backend:/app
+
+  redis:
+    container_name: redis_service
+    
+    image: redis
+    environment:
+      - REDIS_PASSWORD='root'
+    
+  
+    ports:
+      - "6379:6379" #이건 맞는거 같아
+    # volumes:
+    #   - /usr/local/etc/redis/redis.conf
