@@ -16,7 +16,10 @@ import time
 logger = logging.getLogger(__name__)
 
 
-# Create your views here.
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+
+@swagger_auto_schema(method="POST", request_body = LoginSerializer)
 @api_view(['POST']) 
 def login(request):
     #TODO 1 POST로 값 받기
@@ -37,7 +40,7 @@ def login(request):
         return JsonResponse({"message": "incorrect password "}, status=400)
 
     
-
+@swagger_auto_schema(method="POST", request_body = SignUpSerializer)
 @api_view(['POST'])
 def sign_up(request): #이메일을 UK로 지정해서 같은 이메일로 요청시 해당 데이터가 저장되었다가 삭제되는 것 같음.
     email = request.data['email'] #프론트에서 json 형식으로 다운 받은 데이터 중 [] 안에 있는 종류의 데이터를 변수에 저장
@@ -45,30 +48,29 @@ def sign_up(request): #이메일을 UK로 지정해서 같은 이메일로 요�
     nickname = request.data['nickname']
     
     if User.objects.filter(email=request.data['email']).exists():
-        return JsonResponse({"message":"already signed email"}, status=204)
+        return JsonResponse({"message":"already signed email"}, status=400)
     elif User.objects.filter(nickname=request.data['nickname']).exists():
-            return JsonResponse({"message": "already use nickname"})
+            return JsonResponse({"message": "already use nickname"}, status=400)
     else:
         result = User.objects.create(email = email, password = password, nickname = nickname) # 회원가입이 완료된 데이터
         user_id = result.id
         return JsonResponse({"user_id": user_id}, status=200)
 
-
+@swagger_auto_schema(method="POST", request_body=MakePaperSerializer)
 @api_view(['POST']) 
-def paper(request,user_id):
+def paper(request, user_id):
     #TODO 1 프론트에서 정보 받아오기
-    user_id = request.data['user_id']
+    user = User.objects.get(pk=user_id)
     paper_url = request.data['paper_url']
     title = request.data['title']
     
     #TODO 2 user_id를 탐색키로 유저 객체 반환, 이거를 paper의 외래키로 넣어줘야 함
-    user = User.objects.get(pk=user_id)
+    #user = User.objects.get(pk=user_id)
 
     # #TODO 3 paper 테이블 Title로 탐색해서 같은 Title을 가지면 다른 제목을 입력해 주세요 반환
     # papers = Paper.objects.all()
     # if papers.filter(user=user).filter(title=title): #압력 받은 title이 이미 존재하면 "이미 있어요!" 반환
     #      return JsonResponse({"message": "already existing title"}, status=400)
-    
 
     #TODO 4 paper 생성
     new_paper = Paper.objects.create(user=user, paper_url=paper_url, title=title)
@@ -77,6 +79,7 @@ def paper(request,user_id):
     new_paper_id = {"paper_id":new_paper.id}
     return JsonResponse(new_paper_id, status=200)
 
+@swagger_auto_schema(method="POST", request_body=PhotoSerializer)
 @api_view(['POST']) 
 def photo(request,paper_id):
     paper = Paper.objects.get(pk=paper_id) #paper_id는 url을 통해서 들어옴
@@ -105,6 +108,7 @@ def photo(request,paper_id):
     url = {"image_url":image_url}
     return JsonResponse({"message": "photo added"}, status=200)
     
+@swagger_auto_schema(method="POST", request_body = MemoSerializer)
 @api_view(['POST']) 
 def memo(request,paper_id):
     paper = Paper.objects.get(pk=paper_id)
@@ -124,7 +128,7 @@ def memo(request,paper_id):
 
     return JsonResponse({"message": "memo created"}, status=200)
     
-    
+@swagger_auto_schema(method="POST", request_body = MemoDeleteSerializer)
 @api_view(['POST']) 
 def memo_delete(request,memo_id):
     #TODO 1: 메모지 가져오기
@@ -141,7 +145,9 @@ def memo_delete(request,memo_id):
     #Postman으로 잘못된 비밀번호 입력 시 확인했고 
     #비밀번호 맞을 시 DB에서 is_deleted값이 0으로 변하는 것 확인했습니다
 
+
 #구현방식 : 프론트에서 어느 페이퍼인지에대한 정보를 받아서 스티커에 저장한다.
+@swagger_auto_schema(method="POST", request_body = StickerSerializer)
 @api_view(['POST']) 
 def stickers(request,paper_id):
     xcoor = request.data['xcoor']
