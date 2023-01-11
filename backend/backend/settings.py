@@ -133,12 +133,8 @@ AWS_STORAGE_BUCKET_NAME = env('BUCKET_NAME')
 AWS_BUCKET_REGION = env('AWS_REGION')
 
 CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://redis_service:6379/1",
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "PASSWORD":"root"
-        }
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379',
     }
 }
