@@ -195,21 +195,28 @@ def get_paper(request,user_id,paper_id): #user_id는 쓰나?
 
 @api_view(['GET'])
 def get_stickers(request):
+    start = time.time()
     #스티커 객체를 가져온다
     sticker_object = DefaultSticker.objects.all()
-    #sticker_dict={"data":[]}
-    sticker_list = []
-    if not cache.get("stickers"):
+    sticker_dict={"data":[]}
+    #sticker_list = []
+    if not cache.get("sticker_list"):
         for sticker in sticker_object:
             sticker_info_dict ={"default_sticker_id":sticker.id,
             "sticker_url":sticker.sticker_url}
-            #sticker_dict['data'].append(sticker_info_dict)
-            sticker_list.append(sticker_info_dict)
+            sticker_dict['data'].append(sticker_info_dict)
+            #sticker_list.append(sticker_info_dict)
         #Redis 부분
-        cache.set("sticker_list",sticker_list)
+        cache.set("sticker_list",sticker_dict)
         sticker_data = cache.get("sticker_list")
+        speed = time.time() -start
+        speedlog = ">>>>>>>>>걸린시간>>>>>"+str(speed )
+        logger.debug(speedlog)
         return JsonResponse(sticker_data, status=200, safe=False)
+
     #Redis 부분
-    sticker_data = cache.get("stickers_list") #엄청 빨리 가져오는 거죠
-    
+    sticker_data = cache.get("sticker_list") #엄청 빨리 가져오는 거죠
+    speed = time.time() -start
+    speedlog = ">>>>>>>>>걸린시간>>>>>"+str(speed )
+    logger.debug(speedlog)
     return JsonResponse(sticker_data, status=200, safe=False)
