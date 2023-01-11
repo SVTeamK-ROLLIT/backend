@@ -18,3 +18,4 @@ boto3==1.26.45
 
 gunicorn
 django-redis==5.2.0
+redis
