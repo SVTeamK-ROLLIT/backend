@@ -34,6 +34,7 @@ urlpatterns = [
     path('papers/<int:user_id>/<paper_id>',views.get_paper), #paper의 memo,image,sticker의 정보를 가져옵니다
     path('papers/sticker_list',views.get_stickers), #스티커 가져오기
     path('papers/<int:paper_id>/<int:memo_id>/memoxy/', views.memo_xy), # 메모의 x, y좌표 정하기 #주소 끝에 '/'를 넣지 않으면 정상작동하지 않음
+    path('papers/cartoon',views.cartoonize)
 ]
 
 if settings.DEBUG:

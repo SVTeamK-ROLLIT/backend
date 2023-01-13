@@ -37,7 +37,10 @@ INSTALLED_APPS = [
     'corsheaders',
     'drf_yasg',
     #apps
-    'rollpaper.apps.RollpaperConfig'
+    'rollpaper.apps.RollpaperConfig',
+    #celery
+    #'django_celery_beat',
+    'django_celery_results',
     
 ]
 
@@ -155,3 +158,10 @@ LOGGING = {
         'level': 'DEBUG',
     },
 }
+
+# Celery
+CELERY_BROKER_URL = 'amqp://rabbitmq:5672' #뭔소리여 # amqp://rabbitmq:5672
+CELERY_RESULT_BACKEND = 'django-db' #이거 mysql로 바꾸나?
+CELERY_ACCEPT_CONTENT = ['application/json'] #이거또 뭐지?
+CELERY_TASK_SERIALIZER = 'json' 
+CELERY_RESULT_SERIALIZER = 'json'
