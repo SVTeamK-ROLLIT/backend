@@ -114,23 +114,37 @@ def memo(request,paper_id):
     paper = Paper.objects.get(pk=paper_id)
     font = Font.objects.get(font_type=request.data['font']) #폰트랑 색깔이 삭제되면 메모도 사라져
     color = Color.objects.get(color_type=request.data['color']) #color_id로 저장
+    font_color = Color.objects.get(color_type=request.data['font_color'])
     content = request.data['content']
     nickname = request.data['nickname'] 
-    xcoor = request.data['xcoor']
-    ycoor = request.data['ycoor'] 
-    rotate = request.data['rotate'] 
     password = request.data['password']
     #TODO 1 font랑 Color 테이블에 데이터 만들기(로컬에)
 
     #TODO 2 메모지 만들기
     new_memo = Memo.objects.create(paper=paper, font=font, color=color, content=content,
-    nickname=nickname, xcoor=xcoor, ycoor=ycoor, rotate=rotate, password=password)
+    nickname=nickname, font_color = font_color, password=password)
 
-    return JsonResponse({"message": "memo created"}, status=200)
+    return JsonResponse({"memo_id": new_memo.id}, status=200)
+
+@swagger_auto_schema(method="POST", request_body = MemoXySerializer)
+@api_view(["POST"])
+def memo_xy(request, memo_id):
+    #1. 메모 아이디 가져오기
+    memo = Memo.objects.get(pk=memo_id)
+    #2. 메모의 좌표값 입력받기
+    memo.xcoor = request.data['xcoor']
+    memo.ycoor = request.data['ycoor']
+    #3. 입력받은 좌표값을 DB에 저장
+    memo.save()
+    #4. 모든 메모지의 정보를 불러오기(메모지가 제대로 붙은 롤링페이퍼를 보여주기)
+    
+    #4. 저장되었다는 사실알리기
+    return JsonResponse({"memo's xcoor":memo.xcoor, "memo's ycoor":memo.ycoor},status=200)
+
     
 @swagger_auto_schema(method="POST", request_body = MemoDeleteSerializer)
 @api_view(['POST']) 
-def memo_delete(request,memo_id):
+def memo_delete(request, memo_id):
     #TODO 1: 메모지 가져오기
     memo = Memo.objects.get(pk=memo_id)
         
