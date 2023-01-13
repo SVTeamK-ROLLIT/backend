@@ -11,6 +11,10 @@ from django.core.cache    import cache
 import logging
 import time 
 
+import cv2
+import numpy as np
+import urllib.request
+import ssl #인증서
 
 
 logger = logging.getLogger(__name__)
@@ -226,3 +230,61 @@ def get_stickers(request):
     speedlog = ">>>>>>>>>걸린시간>>>>>"+str(speed )
     logger.debug(speedlog)
     return JsonResponse(sticker_data, status=200, safe=False)
+
+@api_view(['POST'])
+def cartoonize(request): #아 request에 사진이 들어가겠구나
+    url = request.data['url'] #이거를 url부분에 넣으면 될거야
+    #이부분만 수정하면 괜찮을 듯
+    #img = cv2.imread('unsplash.jpg', cv2.IMREAD_COLOR) #이거 어떻게 읽어오지? 로컬 파일에서 가져오는 건 알겠는데 post맨으로 받으려니까.. cv2.imread 검색 필요 (이미지 파일 혹은 url)
+    
+    #url로 받아와서 이미지 저장하는 부분
+    context = ssl._create_unverified_context()
+    resp = urllib.request.urlopen(url,context=context)
+    image = np.asarray(bytearray(resp.read()), dtype='uint8')
+    img = cv2.imdecode(image, cv2.IMREAD_COLOR)
+
+    
+    line_size = 9
+    blur_value = 5
+    #edge_mask 선따기
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    gray_blur = cv2.medianBlur(gray, blur_value)
+    edges = cv2.adaptiveThreshold(gray_blur, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, line_size, blur_value)
+
+
+    #색 갯수 정하기
+    total_color = 9 
+    # Transform the image
+    data = np.float32(img).reshape((-1, 3))
+    # Determine criteria
+    criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 20, 0.001)
+    # Implementing K-Means
+    ret, label, center = cv2.kmeans(data, total_color, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
+    center = np.uint8(center)
+    result = center[label.flatten()]
+    result = result.reshape(img.shape)
+    color_img = result
+
+
+    blurred = cv2.bilateralFilter(color_img, d=7, sigmaColor=200,sigmaSpace=200)
+    cartoon = cv2.bitwise_and(blurred,blurred,mask=edges)
+
+    cv2.waitKey()  
+    cv2.destroyAllWindows() 
+    cv2.imshow('cartoon',cartoon)
+    #cv2.imwrite('cartoon3.jpg', cartoon)
+    return JsonResponse({"message": "만화필터 성공"}, status=201)
+    #잠만 이거 뭐로 반환하지?
+    #공식문서에서 cv2.imwrite에서 cartoon이 저장할 이미지니까
+    #일단 s3버킷에 저장한 다음에 url만들어서 그거 보내줘야하나? 
+
+
+
+
+
+
+
+
+
+
+

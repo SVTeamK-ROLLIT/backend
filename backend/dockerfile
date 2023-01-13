@@ -8,7 +8,10 @@ EXPOSE 8080
 
 RUN pip install --upgrade pip && \
     pip install -r requirements.txt && \
-    apt-get -y update && apt-get -y install vim && apt-get clean
+    apt-get -y update && apt-get -y install vim && apt-get clean && \
+    #opencv 설치하기 위해 추가로 작성
+    apt-get -y install libgl1-mesa-glx 
+    
 
 
 
