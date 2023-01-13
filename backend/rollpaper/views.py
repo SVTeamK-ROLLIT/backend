@@ -128,7 +128,7 @@ def memo(request,paper_id):
 
 @swagger_auto_schema(method="POST", request_body = MemoXySerializer)
 @api_view(["POST"])
-def memo_xy(request, memo_id):
+def memo_xy(request, paper_id, memo_id):
     #1. 메모 아이디 가져오기
     memo = Memo.objects.get(pk=memo_id)
     #2. 메모의 좌표값 입력받기
@@ -136,10 +136,13 @@ def memo_xy(request, memo_id):
     memo.ycoor = request.data['ycoor']
     #3. 입력받은 좌표값을 DB에 저장
     memo.save()
-    #4. 모든 메모지의 정보를 불러오기(메모지가 제대로 붙은 롤링페이퍼를 보여주기)
-    
-    #4. 저장되었다는 사실알리기
-    return JsonResponse({"memo's xcoor":memo.xcoor, "memo's ycoor":memo.ycoor},status=200)
+
+    #4. 롤링페이퍼에 저장되어있는 메모, 스티커, 이미지 사진 모두 반환
+    memos = Memo.objects.filter(paper=paper_id)
+    all_memos = list(memos.values())
+
+
+    return JsonResponse({"all_memo": all_memos},status=200)
 
     
 @swagger_auto_schema(method="POST", request_body = MemoDeleteSerializer)
@@ -208,6 +211,8 @@ def get_paper(request,user_id,paper_id): #user_id는 쓰나?
     for sticker in Sticker.objects.filter(paper_id=paper_id):
         json_sticker_part = sticker_serializer(sticker)
         dict["sticker"].append(json_sticker_part)
+    
+    # 메모지의 위치가 지정되지 않아 null인 경우 롤링페이퍼 상에서 출력되지 않도록하기
     
     # json_dict = json.dumps(dict, ensure_ascii=False)
      
