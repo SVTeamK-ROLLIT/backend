@@ -34,12 +34,13 @@ class Color(models.Model):
 class Memo(models.Model):
     paper = models.ForeignKey(Paper,on_delete=models.CASCADE) #paper_id로 저장
     font = models.ForeignKey(Font,on_delete=models.CASCADE) #폰트랑 색깔이 삭제되면 메모도 사라져
-    color = models.ForeignKey(Color,on_delete=models.CASCADE) #color_id로 저장
+    color = models.ForeignKey(to = Color, related_name='color',on_delete=models.CASCADE,verbose_name='메모지색',default='') #color_id로 저장
+    font_color = models.ForeignKey(to = Color,related_name='font_color',on_delete=models.CASCADE,verbose_name='글씨색',default='')
     content = models.CharField(max_length=200) 
     nickname = models.CharField(max_length=20) 
-    xcoor = models.IntegerField() 
-    ycoor = models.IntegerField() 
-    rotate = models.IntegerField() 
+    xcoor = models.IntegerField(null=True) 
+    ycoor = models.IntegerField(null=True) 
+    #rotate = models.IntegerField() 
     password = models.CharField(max_length=20) 
     create_at = models.DateTimeField(auto_now_add=True) 
     update_at = models.DateTimeField(auto_now=True) 

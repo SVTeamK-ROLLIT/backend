@@ -114,23 +114,45 @@ def memo(request,paper_id):
     paper = Paper.objects.get(pk=paper_id)
     font = Font.objects.get(font_type=request.data['font']) #폰트랑 색깔이 삭제되면 메모도 사라져
     color = Color.objects.get(color_type=request.data['color']) #color_id로 저장
+    font_color = Color.objects.get(color_type=request.data['font_color'])
     content = request.data['content']
     nickname = request.data['nickname'] 
-    xcoor = request.data['xcoor']
-    ycoor = request.data['ycoor'] 
-    rotate = request.data['rotate'] 
     password = request.data['password']
     #TODO 1 font랑 Color 테이블에 데이터 만들기(로컬에)
 
     #TODO 2 메모지 만들기
     new_memo = Memo.objects.create(paper=paper, font=font, color=color, content=content,
-    nickname=nickname, xcoor=xcoor, ycoor=ycoor, rotate=rotate, password=password)
+    nickname=nickname, font_color = font_color, password=password)
 
-    return JsonResponse({"message": "memo created"}, status=200)
+    return JsonResponse({"memo_id": new_memo.id}, status=200)
+
+@swagger_auto_schema(method="POST", request_body = MemoXySerializer)
+@api_view(["POST"])
+def memo_xy(request, paper_id, memo_id):
+    #1. 메모 아이디 가져오기
+    memo = Memo.objects.get(pk=memo_id)
+    #2. 메모의 좌표값 입력받기
+    memo.xcoor = request.data['xcoor']
+    memo.ycoor = request.data['ycoor']
+    #3. 입력받은 좌표값을 DB에 저장
+    memo.save()
+
+    #4. 롤링페이퍼에 저장되어있는 메모, 스티커, 이미지 사진 모두 반환
+    memos = Memo.objects.filter(paper=paper_id, is_deleted=1).exclude(xcoor = None, ycoor=None)
+    all_memos = list(memos.values())
+    
+    stickers = Sticker.objects.filter(paper=paper_id)
+    all_stickers = list(stickers.values())
+
+    images = Image.objects.filter(paper=paper_id)
+    all_images = list(images.values())
+
+    return JsonResponse({"all_memo": all_memos, "all_sticker":all_stickers, "all_images":all_images},status=200)
+
     
 @swagger_auto_schema(method="POST", request_body = MemoDeleteSerializer)
 @api_view(['POST']) 
-def memo_delete(request,memo_id):
+def memo_delete(request, memo_id):
     #TODO 1: 메모지 가져오기
     memo = Memo.objects.get(pk=memo_id)
         
@@ -181,19 +203,21 @@ def my_page(request, user_id):
 def get_paper(request,user_id,paper_id): #user_id는 쓰나?
     #TODO memo 먼저 하자
     dict={"memo":[],"image":[],"sticker":[]}
-    for memo in Memo.objects.filter(paper=paper_id): #아마 리스트 형식으로 쿼리셋을 반환할 거에요
+    for memo in Memo.objects.filter(paper=paper_id, is_deleted=1).exclude(xcoor = None, ycoor=None): #아마 리스트 형식으로 쿼리셋을 반환할 거에요
         json_memo_part = memo_serializer(memo) #memo에서 필요한 정보를 JSON으로 바꿔줍니다
         #근데 JSON으로 바꾸려고 하니까 딕셔너리에 추가할 때 오류가 발생해서 그냥 dic으로 반환
         #memo의 value값에 방금 만든 json을 추가하여 수정해 줍니다
         dict["memo"].append(json_memo_part)
     
-    for image in Image.objects.filter(paper=paper_id):
+    for image in Image.objects.filter(paper=paper_id, is_deleted=1).exclude(xcoor = None, ycoor=None):
         json_image_part = image_serializer(image) #딕셔너리 만들기
         dict["image"].append(json_image_part) #원본에 추가
     
-    for sticker in Sticker.objects.filter(paper_id=paper_id):
+    for sticker in Sticker.objects.filter(paper_id=paper_id).exclude(xcoor = None, ycoor=None):
         json_sticker_part = sticker_serializer(sticker)
         dict["sticker"].append(json_sticker_part)
+    
+    # 메모지의 위치가 지정되지 않아 null인 경우 롤링페이퍼 상에서 출력되지 않도록하기
     
     # json_dict = json.dumps(dict, ensure_ascii=False)
      

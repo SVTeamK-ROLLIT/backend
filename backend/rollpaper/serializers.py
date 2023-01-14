@@ -27,7 +27,6 @@ def memo_serializer(memo_queryset):
     dic['password'] = memo_queryset.password
     dic['xcoor'] = memo_queryset.xcoor
     dic['ycoor'] = memo_queryset.ycoor
-    dic['rotate'] = memo_queryset.rotate
     font_id = memo_queryset.font_id #memo에 있는 font_id를 가져옴
     #그 아이디를 기준으로 폰트 컬럼(행)을 찾아서 font_type( ex)"안성탕면체")을 가져옴
     font = Font.objects.get(pk=font_id).font_type 
@@ -86,12 +85,17 @@ class PhotoSerializer(serializers.ModelSerializer):
 class MemoSerializer(serializers.ModelSerializer):
     class Meta: #paper_id는 views.py에서 입력받으므로 serializer에서는 넣지 않음
         model = Memo
-        fields = ('font','color','content','nickname','xcoor','ycoor','rotate','password')
+        fields = ('font','color','content','nickname', 'password')
+
+class MemoXySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Memo
+        fields = ('xcoor','ycoor')
 
 class MemoDeleteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Memo
-        fields = ('id','is_deleted')
+        fields = ('id','password') # is_deleted는 views.py에서 자동 변환하므로 넣지 않아도 된다.
 
 class StickerSerializer(serializers.ModelSerializer):
     class Meta: #paper_id는 views.py에서 입력받으므로 serializer에서는 넣지 않음
