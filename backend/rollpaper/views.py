@@ -138,11 +138,16 @@ def memo_xy(request, paper_id, memo_id):
     memo.save()
 
     #4. 롤링페이퍼에 저장되어있는 메모, 스티커, 이미지 사진 모두 반환
-    memos = Memo.objects.filter(paper=paper_id)
+    memos = Memo.objects.filter(paper=paper_id, is_deleted=1).exclude(xcoor = None, ycoor=None)
     all_memos = list(memos.values())
+    
+    stickers = Sticker.objects.filter(paper=paper_id)
+    all_stickers = list(stickers.values())
 
+    images = Image.objects.filter(paper=paper_id)
+    all_images = list(images.values())
 
-    return JsonResponse({"all_memo": all_memos},status=200)
+    return JsonResponse({"all_memo": all_memos, "all_sticker":all_stickers, "all_images":all_images},status=200)
 
     
 @swagger_auto_schema(method="POST", request_body = MemoDeleteSerializer)
@@ -198,17 +203,17 @@ def my_page(request, user_id):
 def get_paper(request,user_id,paper_id): #user_id는 쓰나?
     #TODO memo 먼저 하자
     dict={"memo":[],"image":[],"sticker":[]}
-    for memo in Memo.objects.filter(paper=paper_id): #아마 리스트 형식으로 쿼리셋을 반환할 거에요
+    for memo in Memo.objects.filter(paper=paper_id, is_deleted=1).exclude(xcoor = None, ycoor=None): #아마 리스트 형식으로 쿼리셋을 반환할 거에요
         json_memo_part = memo_serializer(memo) #memo에서 필요한 정보를 JSON으로 바꿔줍니다
         #근데 JSON으로 바꾸려고 하니까 딕셔너리에 추가할 때 오류가 발생해서 그냥 dic으로 반환
         #memo의 value값에 방금 만든 json을 추가하여 수정해 줍니다
         dict["memo"].append(json_memo_part)
     
-    for image in Image.objects.filter(paper=paper_id):
+    for image in Image.objects.filter(paper=paper_id, is_deleted=1).exclude(xcoor = None, ycoor=None):
         json_image_part = image_serializer(image) #딕셔너리 만들기
         dict["image"].append(json_image_part) #원본에 추가
     
-    for sticker in Sticker.objects.filter(paper_id=paper_id):
+    for sticker in Sticker.objects.filter(paper_id=paper_id).exclude(xcoor = None, ycoor=None):
         json_sticker_part = sticker_serializer(sticker)
         dict["sticker"].append(json_sticker_part)
     
