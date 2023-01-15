@@ -26,4 +26,6 @@ django-Celery-results
 django-Celery-beat
 numpy
 urllib3
+#opencv-python-headless
 opencv-python
+uuid
