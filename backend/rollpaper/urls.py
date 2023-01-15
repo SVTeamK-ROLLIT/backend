@@ -32,8 +32,10 @@ urlpatterns = [
     path('papers/<int:paper_id>/stickers',views.stickers), #스티커를 추가
     path('users/<int:user_id>', views.my_page, name="my_page"), #user_id라는 것이 존재x, User 테이블의 id를 입력받음
     path('papers/<int:user_id>/<paper_id>',views.get_paper), #paper의 memo,image,sticker의 정보를 가져옵니다
+    path('papers/cartoons',views.cartoon_id),
     path('papers/sticker_list',views.get_stickers), #스티커 가져오기
     path('papers/<int:paper_id>/<int:memo_id>/memoxy/', views.memo_xy), # 메모의 x, y좌표 정하기 #주소 끝에 '/'를 넣지 않으면 정상작동하지 않음
+    path('papers/cartoons/results',views.cartoon_result)
 ]
 
 if settings.DEBUG:

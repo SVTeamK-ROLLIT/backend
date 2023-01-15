@@ -11,8 +11,13 @@ from django.core.cache    import cache
 import logging
 import time 
 
-
-
+import cv2
+import numpy as np
+import urllib.request
+import ssl #인증서
+from celery.result import AsyncResult #셀러리가 안깔려 있어서 노랑
+from .tasks import cartoon_task
+import uuid
 logger = logging.getLogger(__name__)
 
 
@@ -96,17 +101,18 @@ def photo(request,paper_id):
         aws_secret_access_key = AWS_SECRET_ACCESS_KEY,
         config = Config(signature_version='s3v4') #이건 뭘까
     )
-    s3.Bucket(AWS_STORAGE_BUCKET_NAME).put_object(Key=image.name, Body=image, ContentType='image/jpg')
+    random_number = str(uuid.uuid4())
+    s3.Bucket(AWS_STORAGE_BUCKET_NAME).put_object(Key=random_number, Body=image, ContentType='image/jpg')
    
     #TODO 2 사진 url을 받아옴
-    image_url = f"https://sangwon-bucket.s3.ap-northeast-1.amazonaws.com/{image.name}"
+    image_url = f"https://sangwon-bucket.s3.ap-northeast-1.amazonaws.com/{random_number}"
 
     #TODO 3 DB에 저장
     new_photo = Image.objects.create(paper=paper, image_url=image_url, password=password,
     xcoor=xcoor, ycoor=ycoor, rotate=rotate)
     
     url = {"image_url":image_url}
-    return JsonResponse({"message": "photo added"}, status=200)
+    return JsonResponse(url, status=200)
     
 @swagger_auto_schema(method="POST", request_body = MemoSerializer)
 @api_view(['POST']) 
@@ -120,7 +126,7 @@ def memo(request,paper_id):
     password = request.data['password']
     #TODO 1 font랑 Color 테이블에 데이터 만들기(로컬에)
 
-    #TODO 2 메모지 만들기
+    #TODO 2 메모지 만들기 
     new_memo = Memo.objects.create(paper=paper, font=font, color=color, content=content,
     nickname=nickname, font_color = font_color, password=password)
 
@@ -250,3 +256,20 @@ def get_stickers(request):
     speedlog = ">>>>>>>>>걸린시간>>>>>"+str(speed )
     logger.debug(speedlog)
     return JsonResponse(sticker_data, status=200, safe=False)
+
+@api_view(['POST'])
+def cartoon_id(request): 
+    url = request.data["url"]
+    task = cartoon_task.delay(url) #큐에 넣기?
+    return_data = {"task_id":task.id}
+    return JsonResponse(return_data, status=201)  
+
+@api_view(['POST'])
+def cartoon_result(request):
+    task_id = request.data['task_id']
+    task = AsyncResult(task_id) #작업 번호를 통해 작업상태 확인
+    if not task.ready(): #아직 변환 완료 X
+        return JsonResponse({'message':"still working"})
+    #이게 뭐지? 일단 여기서 필터처리된 이미지url 받으면  좋을 거 같아
+    data = task.get() # task의 return 값이지 않을까? 
+    return JsonResponse(data,safe=False,status=201)
