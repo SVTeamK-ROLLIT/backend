@@ -269,15 +269,7 @@ def cartoon_result(request):
     task_id = request.data['task_id']
     task = AsyncResult(task_id) #작업 번호를 통해 작업상태 확인
     if not task.ready(): #아직 변환 완료 X
-        return JsonResponse({'message':"still working"},status=102)
+        return JsonResponse({'message':"still working"})
     #이게 뭐지? 일단 여기서 필터처리된 이미지url 받으면  좋을 거 같아
     data = task.get() # task의 return 값이지 않을까? 
     return JsonResponse(data,safe=False,status=201)
-
-
-
-
-
-# https://sangwon-bucket.s3.ap-northeast-1.amazonaws.com/기영이.jpeg
-
-# https://sangwon-bucket.s3.ap-northeast-1.amazonaws.com/기영이.jpeg 이거 뭐가 다른건데
