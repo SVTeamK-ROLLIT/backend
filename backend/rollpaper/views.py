@@ -15,8 +15,9 @@ import cv2
 import numpy as np
 import urllib.request
 import ssl #인증서
-
-
+from celery.result import AsyncResult #셀러리가 안깔려 있어서 노랑
+from .tasks import cartoon_task
+import uuid
 logger = logging.getLogger(__name__)
 
 
@@ -100,17 +101,18 @@ def photo(request,paper_id):
         aws_secret_access_key = AWS_SECRET_ACCESS_KEY,
         config = Config(signature_version='s3v4') #이건 뭘까
     )
-    s3.Bucket(AWS_STORAGE_BUCKET_NAME).put_object(Key=image.name, Body=image, ContentType='image/jpg')
+    random_number = str(uuid.uuid4())
+    s3.Bucket(AWS_STORAGE_BUCKET_NAME).put_object(Key=random_number, Body=image, ContentType='image/jpg')
    
     #TODO 2 사진 url을 받아옴
-    image_url = f"https://sangwon-bucket.s3.ap-northeast-1.amazonaws.com/{image.name}"
+    image_url = f"https://sangwon-bucket.s3.ap-northeast-1.amazonaws.com/{random_number}"
 
     #TODO 3 DB에 저장
     new_photo = Image.objects.create(paper=paper, image_url=image_url, password=password,
     xcoor=xcoor, ycoor=ycoor, rotate=rotate)
     
     url = {"image_url":image_url}
-    return JsonResponse({"message": "photo added"}, status=200)
+    return JsonResponse(url, status=200)
     
 @swagger_auto_schema(method="POST", request_body = MemoSerializer)
 @api_view(['POST']) 
@@ -124,7 +126,7 @@ def memo(request,paper_id):
     password = request.data['password']
     #TODO 1 font랑 Color 테이블에 데이터 만들기(로컬에)
 
-    #TODO 2 메모지 만들기
+    #TODO 2 메모지 만들기 
     new_memo = Memo.objects.create(paper=paper, font=font, color=color, content=content,
     nickname=nickname, font_color = font_color, password=password)
 
@@ -256,59 +258,26 @@ def get_stickers(request):
     return JsonResponse(sticker_data, status=200, safe=False)
 
 @api_view(['POST'])
-def cartoonize(request): #아 request에 사진이 들어가겠구나
-    url = request.data['url'] #이거를 url부분에 넣으면 될거야
-    #이부분만 수정하면 괜찮을 듯
-    #img = cv2.imread('unsplash.jpg', cv2.IMREAD_COLOR) #이거 어떻게 읽어오지? 로컬 파일에서 가져오는 건 알겠는데 post맨으로 받으려니까.. cv2.imread 검색 필요 (이미지 파일 혹은 url)
-    
-    #url로 받아와서 이미지 저장하는 부분
-    context = ssl._create_unverified_context()
-    resp = urllib.request.urlopen(url,context=context)
-    image = np.asarray(bytearray(resp.read()), dtype='uint8')
-    img = cv2.imdecode(image, cv2.IMREAD_COLOR)
+def cartoon_id(request): 
+    url = request.data["url"]
+    task = cartoon_task.delay(url) #큐에 넣기?
+    return_data = {"task_id":task.id}
+    return JsonResponse(return_data, status=201)  
 
-    
-    line_size = 9
-    blur_value = 5
-    #edge_mask 선따기
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    gray_blur = cv2.medianBlur(gray, blur_value)
-    edges = cv2.adaptiveThreshold(gray_blur, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, line_size, blur_value)
-
-
-    #색 갯수 정하기
-    total_color = 9 
-    # Transform the image
-    data = np.float32(img).reshape((-1, 3))
-    # Determine criteria
-    criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 20, 0.001)
-    # Implementing K-Means
-    ret, label, center = cv2.kmeans(data, total_color, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
-    center = np.uint8(center)
-    result = center[label.flatten()]
-    result = result.reshape(img.shape)
-    color_img = result
-
-
-    blurred = cv2.bilateralFilter(color_img, d=7, sigmaColor=200,sigmaSpace=200)
-    cartoon = cv2.bitwise_and(blurred,blurred,mask=edges)
-
-    cv2.waitKey()  
-    cv2.destroyAllWindows() 
-    cv2.imshow('cartoon',cartoon)
-    #cv2.imwrite('cartoon3.jpg', cartoon)
-    return JsonResponse({"message": "만화필터 성공"}, status=201)
-    #잠만 이거 뭐로 반환하지?
-    #공식문서에서 cv2.imwrite에서 cartoon이 저장할 이미지니까
-    #일단 s3버킷에 저장한 다음에 url만들어서 그거 보내줘야하나? 
+@api_view(['POST'])
+def cartoon_result(request):
+    task_id = request.data['task_id']
+    task = AsyncResult(task_id) #작업 번호를 통해 작업상태 확인
+    if not task.ready(): #아직 변환 완료 X
+        return JsonResponse({'message':"still working"},status=102)
+    #이게 뭐지? 일단 여기서 필터처리된 이미지url 받으면  좋을 거 같아
+    data = task.get() # task의 return 값이지 않을까? 
+    return JsonResponse(data,safe=False,status=201)
 
 
 
 
 
+# https://sangwon-bucket.s3.ap-northeast-1.amazonaws.com/기영이.jpeg
 
-
-
-
-
-
+# https://sangwon-bucket.s3.ap-northeast-1.amazonaws.com/기영이.jpeg 이거 뭐가 다른건데

@@ -25,6 +25,7 @@ services:
       - "8080:8080"
     volumes:
       - ./backend:/app
+  
 
   redis:
     container_name: redis_contain
@@ -37,3 +38,30 @@ services:
     volumes:
       - 'redisdata:/data'    
     #   - /usr/local/etc/redis/redis.conf
+  
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:latest #아마 될거야
+    environment:
+      - RABBITMQ_USER=guest
+      - RABITMQ_PASSWORD=guset #막막하네
+    ports:
+      - "5672:5672" #rabbitMQ default port
+      - "15672:15672" #UI를 위한 port 이건 뭐지?
+    expose: #이건 뭐더라?
+      - "15672"
+    
+  celery_worker:
+    container_name: celery_worker
+    build:
+       context: ./backend #수정
+       
+    ports: [] #이건 왜 비어있지?
+    depends_on: 
+      - backend 
+      - rabbitmq 
+    command: sh -c "celery -A backend worker --loglevel=info" #수정
+
+
+
+
