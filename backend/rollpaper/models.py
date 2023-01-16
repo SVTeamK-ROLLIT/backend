@@ -25,17 +25,20 @@ class Paper(models.Model):
     is_deleted = models.IntegerField(default=1) 
 
 
-class Font(models.Model):
-    font_type = models.CharField(max_length=20) 
+# class Font(models.Model):
+#     font_type = models.CharField(max_length=20) 
 
-class Color(models.Model):
-    color_type = models.CharField(max_length=20) #16진수 코드는 문자인가?
+# class Color(models.Model):
+#     color_type = models.CharField(max_length=20) #16진수 코드는 문자인가?
 
 class Memo(models.Model):
     paper = models.ForeignKey(Paper,on_delete=models.CASCADE) #paper_id로 저장
-    font = models.ForeignKey(Font,on_delete=models.CASCADE) #폰트랑 색깔이 삭제되면 메모도 사라져
-    color = models.ForeignKey(to = Color, related_name='color',on_delete=models.CASCADE,verbose_name='메모지색',default='') #color_id로 저장
-    font_color = models.ForeignKey(to = Color,related_name='font_color',on_delete=models.CASCADE,verbose_name='글씨색',default='')
+    # font = models.ForeignKey(Font,on_delete=models.CASCADE) #폰트랑 색깔이 삭제되면 메모도 사라져
+    # color = models.ForeignKey(to = Color, related_name='color',on_delete=models.CASCADE,verbose_name='메모지색',default='') #color_id로 저장
+    # font_color = models.ForeignKey(to = Color,related_name='font_color',on_delete=models.CASCADE,verbose_name='글씨색',default='')
+    font = models.CharField(max_length=50)
+    color = models.CharField(max_length=50)
+    font_color = models.CharField(max_length=50)
     content = models.CharField(max_length=200) 
     nickname = models.CharField(max_length=20) 
     xcoor = models.IntegerField(null=True) 
