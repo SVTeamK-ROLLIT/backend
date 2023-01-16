@@ -118,9 +118,12 @@ def photo(request,paper_id):
 @api_view(['POST']) 
 def memo(request,paper_id):
     paper = Paper.objects.get(pk=paper_id)
-    font = Font.objects.get(font_type=request.data['font']) #폰트랑 색깔이 삭제되면 메모도 사라져
-    color = Color.objects.get(color_type=request.data['color']) #color_id로 저장
-    font_color = Color.objects.get(color_type=request.data['font_color'])
+    # font = Font.objects.get(font_type=request.data['font']) #폰트랑 색깔이 삭제되면 메모도 사라져
+    font = request.data['font'] #폰트랑 색깔이 삭제되면 메모도 사라져
+    # color = Color.objects.get(color_type=request.data['color']) #color_id로 저장
+    color = request.data['color'] #color_id로 저장
+    # font_color = Color.objects.get(color_type=request.data['font_color'])
+    font_color = request.data['font_color']
     content = request.data['content']
     nickname = request.data['nickname'] 
     password = request.data['password']
