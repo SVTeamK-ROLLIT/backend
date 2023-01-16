@@ -1,6 +1,7 @@
 from django.urls import path, include
 from . import views
 
+
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
@@ -35,7 +36,10 @@ urlpatterns = [
     path('papers/cartoons',views.cartoon_id),
     path('papers/sticker_list',views.get_stickers), #스티커 가져오기
     path('papers/<int:paper_id>/<int:memo_id>/memoxy/', views.memo_xy), # 메모의 x, y좌표 정하기 #주소 끝에 '/'를 넣지 않으면 정상작동하지 않음
-    path('papers/cartoons/results',views.cartoon_result)
+    path('papers/cartoons/results',views.cartoon_result),
+
+    #promethus
+    path("", include("django_prometheus.urls")),
 ]
 
 if settings.DEBUG:
