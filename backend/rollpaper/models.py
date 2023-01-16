@@ -40,7 +40,7 @@ class Memo(models.Model):
     color = models.CharField(max_length=50)
     font_color = models.CharField(max_length=50)
     content = models.CharField(max_length=200) 
-    nickname = models.CharField(max_length=20) 
+    nickname = models.CharField(max_length=100) 
     xcoor = models.IntegerField(null=True) 
     ycoor = models.IntegerField(null=True) 
     #rotate = models.IntegerField() 
