@@ -131,11 +131,13 @@ def memo(request,paper_id):
     content = request.data['content']
     nickname = request.data['nickname'] 
     password = request.data['password']
+    xcoor = request.data['xcoor']
+    ycoor = request.data['ycoor']
     #TODO 1 font랑 Color 테이블에 데이터 만들기(로컬에)
 
     #TODO 2 메모지 만들기 
     new_memo = Memo.objects.create(paper=paper, font=font, color=color, content=content,
-    nickname=nickname, font_color = font_color, password=password)
+    nickname=nickname, font_color = font_color, password=password, xcoor=xcoor, ycoor=ycoor)
 
     return JsonResponse({"memo_id": new_memo.id}, status=200)
 
