@@ -16,22 +16,35 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
 
+  # prometheus:
+  #   container_name: prometheus
+  #   image: prom/prometheus
+  #   volumes:
+  #     - prometheus_data:/prometheus
+  #     - ./prometheus.yml:/prometheus/prometheus.yml
+  #   ports:
+  #     - 9090:9090
   prometheus:
-    image: prom/prometheus
+    container_name: prometheus
+    image: prom/prometheus:latest
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml' 
     volumes:
-      - prometheus_data:/prometheus
-      - ./prometheus.yml:/prometheus/prometheus.yml
+      - ./prometheus:/etc/prometheus/
+      # - ./prometheus.yml:/prometheus/prometheus.yml
     ports:
       - 9090:9090
   
   grafana:
+    container_name: grafana
     image: grafana/grafana
-    # volumes:
-    #   - grafana_data:/var/lib/grafana
+    volumes:
+      - grafana_data:/var/lib/grafana
     ports:
       - 3000:3000
 
   backend:
+    container_name: backend
     build: ./backend
     command: >
       bash -c "python wait_mysql.py &&
