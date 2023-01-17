@@ -197,7 +197,7 @@ def stickers(request,paper_id):
     #스티커 컬럼을 만드는 재료로 스터커 저장소에서 가져온 객체가 필요(위의 변수)
     new_sticker = Sticker.objects.create(default_sticker=default_sticker, password=password, xcoor=xcoor, 
     ycoor=ycoor, rotate=rotate, paper=paper)
-    return JsonResponse({"message": "sticker added"}, status=201)
+    return JsonResponse({"sticker_url": default_sticker.sticker_url}, status=201)
     
     #실패하는 케이스는 생각을 못했고 사진을 가리면 안되는 느낌으로 추가구현하면 좋을 거 같습니다
 
