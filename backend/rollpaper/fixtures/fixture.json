@@ -1,0 +1,17 @@
+[
+    {
+        "model": "rollpaper.defaultsticker",
+        "pk": 1,
+        "fields": {"sticker_url": "나무놀보"}
+    },
+    {
+        "model": "rollpaper.defaultsticker",
+        "pk": 2,
+        "fields": {"sticker_url": "나무"}
+    },
+    {
+        "model": "rollpaper.defaultsticker",
+        "pk": 3,
+        "fields": {"sticker_url": "돌맹이"}
+    }
+]
