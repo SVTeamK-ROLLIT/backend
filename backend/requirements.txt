@@ -29,3 +29,5 @@ urllib3
 #opencv-python-headless
 opencv-python
 uuid
+#CORS
+django-cors-header
