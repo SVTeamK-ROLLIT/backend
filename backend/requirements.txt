@@ -18,17 +18,18 @@ boto3==1.26.45
 
 gunicorn
 django-redis==5.2.0
-redis
+redis==4.4.2
+
 
 # Celery
-Celery
-django-Celery-results
-django-Celery-beat
-numpy
-urllib3
+Celery== 5.2.7
+django-Celery-results==2.4.0
+#django-Celery-beat
+numpy==1.24.1
+urllib3==1.26.14
 #opencv-python-headless
-opencv-python
-uuid
+opencv-python==4.7.0.68
+uuid==1.30
 
 #prometheus
 django-prometheus
