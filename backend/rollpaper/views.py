@@ -16,9 +16,13 @@ import numpy as np
 import urllib.request
 import ssl #인증서
 from celery.result import AsyncResult #셀러리가 안깔려 있어서 노랑
-from .tasks import cartoon_task
+from .tasks import cartoon_task, email_task
 import uuid
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+
 logger = logging.getLogger(__name__)
+
 
 
 from drf_yasg import openapi
@@ -118,17 +122,22 @@ def photo(request,paper_id):
 @api_view(['POST']) 
 def memo(request,paper_id):
     paper = Paper.objects.get(pk=paper_id)
-    font = Font.objects.get(font_type=request.data['font']) #폰트랑 색깔이 삭제되면 메모도 사라져
-    color = Color.objects.get(color_type=request.data['color']) #color_id로 저장
-    font_color = Color.objects.get(color_type=request.data['font_color'])
+    # font = Font.objects.get(font_type=request.data['font']) #폰트랑 색깔이 삭제되면 메모도 사라져
+    font = request.data['font'] #폰트랑 색깔이 삭제되면 메모도 사라져
+    # color = Color.objects.get(color_type=request.data['color']) #color_id로 저장
+    color = request.data['color'] #color_id로 저장
+    # font_color = Color.objects.get(color_type=request.data['font_color'])
+    font_color = request.data['font_color']
     content = request.data['content']
     nickname = request.data['nickname'] 
     password = request.data['password']
+    xcoor = request.data['xcoor']
+    ycoor = request.data['ycoor']
     #TODO 1 font랑 Color 테이블에 데이터 만들기(로컬에)
 
     #TODO 2 메모지 만들기 
     new_memo = Memo.objects.create(paper=paper, font=font, color=color, content=content,
-    nickname=nickname, font_color = font_color, password=password)
+    nickname=nickname, font_color = font_color, password=password, xcoor=xcoor, ycoor=ycoor)
 
     return JsonResponse({"memo_id": new_memo.id}, status=200)
 
@@ -273,3 +282,25 @@ def cartoon_result(request):
     #이게 뭐지? 일단 여기서 필터처리된 이미지url 받으면  좋을 거 같아
     data = task.get() # task의 return 값이지 않을까? 
     return JsonResponse(data,safe=False,status=201)
+
+@api_view(['POST'])
+def email_id(request):
+    url = request.data["url"]
+    email  =request.data["email"]
+    data ={"url" : url, "email" : email}
+    task = email_task.delay(data)
+    return_data = {"task_id":task.id}
+    return JsonResponse(return_data, status=201)
+
+@csrf_exempt 
+@api_view(['POST'])
+def email_result(request):
+    task_id = request.data['task_id']
+    task = AsyncResult(task_id) #작업 번호를 통해 작업상태 확인
+    if not task.ready(): #아직 변환 완료 X
+        return JsonResponse({'message':"still working"})
+    data = task.get() # task의 return 값이지 않을까? 
+    return JsonResponse(data,safe=False,status=201)
+
+    
+

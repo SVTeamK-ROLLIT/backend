@@ -27,10 +27,12 @@ def memo_serializer(memo_queryset):
     dic['password'] = memo_queryset.password
     dic['xcoor'] = memo_queryset.xcoor
     dic['ycoor'] = memo_queryset.ycoor
-    font_id = memo_queryset.font_id #memo에 있는 font_id를 가져옴
-    #그 아이디를 기준으로 폰트 컬럼(행)을 찾아서 font_type( ex)"안성탕면체")을 가져옴
-    font = Font.objects.get(pk=font_id).font_type 
-    dic["font"] = font
+    # font_id = memo_queryset.font_id #memo에 있는 font_id를 가져옴
+    # #그 아이디를 기준으로 폰트 컬럼(행)을 찾아서 font_type( ex)"안성탕면체")을 가져옴
+    # font = Font.objects.get(pk=font_id).font_type 
+    dic["font"] = memo_queryset.font
+    dic["color"] = memo_queryset.color
+    dic["font_color"]=memo_queryset.font_color
     
     #json이랑 dictionary랑 뭐가 다른지는 모르겠는데 JSON으로 만들어주는 느낌
     # json_dic = json.dumps(dic) 

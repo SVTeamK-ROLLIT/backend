@@ -163,3 +163,6 @@ CELERY_RESULT_BACKEND = 'django-db' #이거 mysql로 바꾸나?
 CELERY_ACCEPT_CONTENT = ['application/json'] #이거또 뭐지?
 CELERY_TASK_SERIALIZER = 'json' 
 CELERY_RESULT_SERIALIZER = 'json'
+
+EMAIL_ADDR = env('EMAIL_ADDR')
+EMAIL_PASSWORD = env('EMAIL_PASSWORD')
