@@ -27,6 +27,18 @@ services:
     ports:
       - 9090:9090
   
+  cadvisor:
+    image: zcube/cadvisor
+    container_name: cadvisor
+    volumes:
+      - '/:/rootfs:ro'
+      - '/var/run:/var/run:ro'
+      - '/sys:/sys:ro'
+      - '/var/lib/docker/:/var/lib/docker:ro'
+      - '/dev/disk/:/dev/disk:ro'
+    ports:
+      - 8000:8080
+
   grafana:
     container_name: grafana
     image: grafana/grafana
