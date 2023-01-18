@@ -3,6 +3,8 @@ version: "3.8"
 volumes:
   mysql_data:
   redisdata:
+  prometheus_data: {}
+  grafana_data: {}
 
 services:
   mysqldb:
@@ -14,7 +16,37 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
 
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:latest
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml' 
+    volumes:
+      - ./prometheus:/etc/prometheus/
+      # - ./prometheus.yml:/prometheus/prometheus.yml
+    ports:
+      - 9090:9090
+  
+  grafana:
+    container_name: grafana
+    image: grafana/grafana
+    environment:
+      GF_INSTALL_PLUGINS: "grafana-clock-panel,grafana-simple-json-datasource"
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: "Admin"
+      GF_AUTH_DISABLE_LOGIN_FORM: "true"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+    ports:
+      - 3000:3000
+    depends_on:
+      - prometheus
+    restart: always
+
   backend:
+    container_name: backend
     build: ./backend
     command: >
       bash -c "python wait_mysql.py &&
@@ -61,8 +93,7 @@ services:
     depends_on: 
       - backend 
       - rabbitmq 
+      - mysqldb
     command: sh -c "celery -A backend worker --loglevel=info" #수정
-
-
-
-
+    tty: true
+    restart: always

@@ -29,3 +29,6 @@ urllib3
 #opencv-python-headless
 opencv-python
 uuid
+
+#prometheus
+django-prometheus
