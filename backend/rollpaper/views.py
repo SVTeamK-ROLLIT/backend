@@ -97,6 +97,8 @@ def photo(request,paper_id):
     rotate = request.data['rotate']
     password = request.data['password']
     image = request.data['image'] # 우리가 DB에 저장할 때는 url을 넣어줄거야 url은 s3버킷에서 받아와
+    width = request.data['width']
+    height = request.data['height']
 
     #TODO 1 사진을 s3 버킷에 올리기
     s3=boto3.resource( #S3 버킷 등록하기
@@ -113,7 +115,7 @@ def photo(request,paper_id):
 
     #TODO 3 DB에 저장
     new_photo = Image.objects.create(paper=paper, image_url=image_url, password=password,
-    xcoor=xcoor, ycoor=ycoor, rotate=rotate)
+    xcoor=xcoor, ycoor=ycoor, rotate=rotate, width=width, height=height)
     
     url = {"image_url":image_url}
     return JsonResponse(url, status=200)
