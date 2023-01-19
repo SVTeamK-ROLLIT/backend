@@ -302,5 +302,23 @@ def email_result(request):
     data = task.get() # task의 return 값이지 않을까? 
     return JsonResponse(data,safe=False,status=201)
 
+
+@api_view(['POST']) 
+def s3_upload(request):
+    image = request.data['image'] # 우리가 DB에 저장할 때는 url을 넣어줄거야 url은 s3버킷에서 받아와
+     #TODO 1 사진을 s3 버킷에 올리기
+    s3=boto3.resource( #S3 버킷 등록하기
+        's3',
+        aws_access_key_id = AWS_ACCESS_KEY_ID,
+        aws_secret_access_key = AWS_SECRET_ACCESS_KEY,
+        config = Config(signature_version='s3v4') #이건 뭘까
+    )
+    random_number = str(uuid.uuid4())
+    s3.Bucket(AWS_STORAGE_BUCKET_NAME).put_object(Key=random_number, Body=image, ContentType='image/jpg')
+   
+    #TODO 2 사진 url을 받아옴
+    image_url = f"https://sangwon-bucket.s3.ap-northeast-1.amazonaws.com/{random_number}"
     
+    url = {"image_url":image_url}
+    return JsonResponse(url, status=200)
 
