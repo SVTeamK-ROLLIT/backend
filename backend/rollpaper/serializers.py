@@ -46,6 +46,8 @@ def image_serializer(image_queryset):
     dic['rotate'] = image_queryset.rotate
     #이미지 url을 가져와야해 폰트와 다르게 이미지 테이블에 url이 있어
     dic['image_url'] = image_queryset.image_url
+    dic['width'] = image_queryset.width
+    dic['height'] = image_queryset.height
 
     return dic
 
