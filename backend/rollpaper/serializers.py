@@ -42,7 +42,7 @@ def image_serializer(image_queryset):
     dic = {}
     dic['password'] = image_queryset.password
     dic['xcoor'] = image_queryset.xcoor
-    dic['ycppr'] = image_queryset.ycoor
+    dic['ycoor'] = image_queryset.ycoor
     dic['rotate'] = image_queryset.rotate
     #이미지 url을 가져와야해 폰트와 다르게 이미지 테이블에 url이 있어
     dic['image_url'] = image_queryset.image_url
