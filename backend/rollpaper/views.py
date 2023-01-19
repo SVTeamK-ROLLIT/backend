@@ -141,28 +141,28 @@ def memo(request,paper_id):
 
     return JsonResponse({"memo_id": new_memo.id}, status=200)
 
-@swagger_auto_schema(method="POST", request_body = MemoXySerializer)
-@api_view(["POST"])
-def memo_xy(request, paper_id, memo_id):
-    #1. 메모 아이디 가져오기
-    memo = Memo.objects.get(pk=memo_id)
-    #2. 메모의 좌표값 입력받기
-    memo.xcoor = request.data['xcoor']
-    memo.ycoor = request.data['ycoor']
-    #3. 입력받은 좌표값을 DB에 저장
-    memo.save()
+# @swagger_auto_schema(method="POST", request_body = MemoXySerializer)
+# @api_view(["POST"])
+# def memo_xy(request, paper_id, memo_id):
+#     #1. 메모 아이디 가져오기
+#     memo = Memo.objects.get(pk=memo_id)
+#     #2. 메모의 좌표값 입력받기
+#     memo.xcoor = request.data['xcoor']
+#     memo.ycoor = request.data['ycoor']
+#     #3. 입력받은 좌표값을 DB에 저장
+#     memo.save()
 
-    #4. 롤링페이퍼에 저장되어있는 메모, 스티커, 이미지 사진 모두 반환
-    memos = Memo.objects.filter(paper=paper_id, is_deleted=1).exclude(xcoor = None, ycoor=None)
-    all_memos = list(memos.values())
+#     #4. 롤링페이퍼에 저장되어있는 메모, 스티커, 이미지 사진 모두 반환
+#     memos = Memo.objects.filter(paper=paper_id, is_deleted=1).exclude(xcoor = None, ycoor=None)
+#     all_memos = list(memos.values())
     
-    stickers = Sticker.objects.filter(paper=paper_id)
-    all_stickers = list(stickers.values())
+#     stickers = Sticker.objects.filter(paper=paper_id)
+#     all_stickers = list(stickers.values())
 
-    images = Image.objects.filter(paper=paper_id)
-    all_images = list(images.values())
+#     images = Image.objects.filter(paper=paper_id)
+#     all_images = list(images.values())
 
-    return JsonResponse({"all_memo": all_memos, "all_sticker":all_stickers, "all_images":all_images},status=200)
+#     return JsonResponse({"all_memo": all_memos, "all_sticker":all_stickers, "all_images":all_images},status=200)
 
     
 @swagger_auto_schema(method="POST", request_body = MemoDeleteSerializer)
@@ -215,9 +215,11 @@ def my_page(request, user_id):
     return JsonResponse(dict, safe=False)
 
 @api_view(['GET'])
-def get_paper(request,user_id,paper_id): #user_id는 쓰나?
+def get_paper(request,paper_id): #user_id는 쓰나?
     #TODO memo 먼저 하자
-    dict={"memo":[],"image":[],"sticker":[]}
+    dict={"title":"title", "memo":[],"image":[],"sticker":[]}
+    title = Paper.objects.get(pk=paper_id).title
+    dict["title"] = title
     for memo in Memo.objects.filter(paper=paper_id, is_deleted=1).exclude(xcoor = None, ycoor=None): #아마 리스트 형식으로 쿼리셋을 반환할 거에요
         json_memo_part = memo_serializer(memo) #memo에서 필요한 정보를 JSON으로 바꿔줍니다
         #근데 JSON으로 바꾸려고 하니까 딕셔너리에 추가할 때 오류가 발생해서 그냥 dic으로 반환
@@ -232,12 +234,10 @@ def get_paper(request,user_id,paper_id): #user_id는 쓰나?
         json_sticker_part = sticker_serializer(sticker)
         dict["sticker"].append(json_sticker_part)
     
-    # 메모지의 위치가 지정되지 않아 null인 경우 롤링페이퍼 상에서 출력되지 않도록하기
-    
-    # json_dict = json.dumps(dict, ensure_ascii=False)
-     
+    #메모지의 위치가 지정되지 않아 null인 경우 롤링페이퍼 상에서 출력되지 않도록하기
+    json_dict = json.dumps(dict, ensure_ascii=False)
     return JsonResponse(dict, safe=False )
-
+    
 @api_view(['GET'])
 def get_stickers(request):
     start = time.time()
