@@ -219,11 +219,12 @@ def my_page(request, user_id):
 @api_view(['GET'])
 def get_paper(request,paper_id): #user_id는 쓰나?
     #TODO memo 먼저 하자
-    dict={"title":"title", "paper_id":"paper_id","memo":[],"image":[],"sticker":[]}
-    title = Paper.objects.get(pk=paper_id).title
+    dict={"title":"title", "paper_url":"paper_url","memo":[],"image":[],"sticker":[]}
+    paper = Paper.objects.get(pk=paper_id)
+    title = paper.title
+    paper_url = paper.paper_url
     dict["title"] = title
-    paper_id = paper_id
-    dict["paper_id"] = paper_id
+    dict["paper_url"] = paper_url
 
     for memo in Memo.objects.filter(paper=paper_id, is_deleted=1).exclude(xcoor = None, ycoor=None): #아마 리스트 형식으로 쿼리셋을 반환할 거에요
         json_memo_part = memo_serializer(memo) #memo에서 필요한 정보를 JSON으로 바꿔줍니다
