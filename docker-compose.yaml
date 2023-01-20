@@ -35,6 +35,7 @@ services:
       - '/var/run:/var/run:ro'
       - '/sys:/sys:ro'
       - '/var/lib/docker/:/var/lib/docker:ro'
+      - '/var/run/docker.sock:/var/run/docker.sock:rw'
       - '/dev/disk/:/dev/disk:ro'
     ports:
       - 8000:8080

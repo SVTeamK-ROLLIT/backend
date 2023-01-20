@@ -9,4 +9,4 @@ scrape_configs:
   
   - job_name: "cAdvisor"
     static_configs:
-      - targets: ["backend:8000"]
+      - targets: ["cadvisor:8000"]
