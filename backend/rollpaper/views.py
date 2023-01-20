@@ -219,9 +219,12 @@ def my_page(request, user_id):
 @api_view(['GET'])
 def get_paper(request,paper_id): #user_id는 쓰나?
     #TODO memo 먼저 하자
-    dict={"title":"title", "memo":[],"image":[],"sticker":[]}
+    dict={"title":"title", "paper_id":"paper_id","memo":[],"image":[],"sticker":[]}
     title = Paper.objects.get(pk=paper_id).title
     dict["title"] = title
+    paper_id = paper_id
+    dict["paper_id"] = paper_id
+
     for memo in Memo.objects.filter(paper=paper_id, is_deleted=1).exclude(xcoor = None, ycoor=None): #아마 리스트 형식으로 쿼리셋을 반환할 거에요
         json_memo_part = memo_serializer(memo) #memo에서 필요한 정보를 JSON으로 바꿔줍니다
         #근데 JSON으로 바꾸려고 하니까 딕셔너리에 추가할 때 오류가 발생해서 그냥 dic으로 반환
@@ -321,6 +324,6 @@ def s3_upload(request):
     #TODO 2 사진 url을 받아옴
     image_url = f"https://sangwon-bucket.s3.ap-northeast-1.amazonaws.com/{random_number}"
     
-    url = {"image_url":image_url}
+    url = {"url":image_url}
     return JsonResponse(url, status=200)
 
