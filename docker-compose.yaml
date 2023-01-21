@@ -27,18 +27,37 @@ services:
     ports:
       - 9090:9090
   
-  cadvisor:
-    container_name: cadvisor
-    image: zcube/cadvisor
-    volumes:
-      - '/:/rootfs:ro'
-      - '/var/run:/var/run:ro'
-      - '/sys:/sys:ro'
-      - '/var/lib/docker/:/var/lib/docker:ro'
-      - '/var/run/docker.sock:/var/run/docker.sock:rw'
-      - '/dev/disk/:/dev/disk:ro'
+  node-exporter:
+    container_name: node-exporter
+    image: prom/node-exporter
     ports:
-      - 8000:8080
+      - 9100:9100
+
+  cadvisor: #docker health check 해보기, 컨테이너 순서를 보장
+    container_name: cadvisor
+    image: gcr.io/cadvisor/cadvisor:v0.45.0 #zcube/cadvisor
+    privileged: true
+    volumes: #빠진 volumes 찾아보기
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      # - /var/run:/var/run
+      # - /dev/disk/:/dev/disk:ro
+      # - /sys/fs/cgroup:/cgroup:ro
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /etc/machine-id:/etc/machine-id:ro # Failed to get system UUID: open /etc/machine-id: no such file or directory 해결책
+    ports:
+      - 8081:8080
+    devices:
+      - /dev/kmsg:/dev/kmsg
+
+    healthcheck:
+      test: ["CMD","curl","-f","http://localhost:8081"]
+      interval: 1m30s
+      timeout: 1m30s
+      retries: 3
+      start_period: 40s
 
   grafana:
     container_name: grafana
@@ -54,8 +73,6 @@ services:
       - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
     ports:
       - 3001:3000
-    depends_on:
-      - prometheus
     restart: always
 
   backend:
@@ -110,3 +127,4 @@ services:
     command: sh -c "celery -A backend worker --loglevel=info" #수정
     tty: true
     restart: always
+    
