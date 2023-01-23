@@ -97,6 +97,8 @@ def photo(request,paper_id):
     rotate = request.data['rotate']
     password = request.data['password']
     image = request.data['image'] # 우리가 DB에 저장할 때는 url을 넣어줄거야 url은 s3버킷에서 받아와
+    width = request.data['width']
+    height = request.data['height']
 
     #TODO 1 사진을 s3 버킷에 올리기
     s3=boto3.resource( #S3 버킷 등록하기
@@ -113,7 +115,7 @@ def photo(request,paper_id):
 
     #TODO 3 DB에 저장
     new_photo = Image.objects.create(paper=paper, image_url=image_url, password=password,
-    xcoor=xcoor, ycoor=ycoor, rotate=rotate)
+    xcoor=xcoor, ycoor=ycoor, rotate=rotate, width=width, height=height)
     
     url = {"image_url":image_url}
     return JsonResponse(url, status=200)
@@ -217,9 +219,13 @@ def my_page(request, user_id):
 @api_view(['GET'])
 def get_paper(request,paper_id): #user_id는 쓰나?
     #TODO memo 먼저 하자
-    dict={"title":"title", "memo":[],"image":[],"sticker":[]}
-    title = Paper.objects.get(pk=paper_id).title
+    dict={"title":"title", "paper_url":"paper_url","memo":[],"image":[],"sticker":[]}
+    paper = Paper.objects.get(pk=paper_id)
+    title = paper.title
+    paper_url = paper.paper_url
     dict["title"] = title
+    dict["paper_url"] = paper_url
+
     for memo in Memo.objects.filter(paper=paper_id, is_deleted=1).exclude(xcoor = None, ycoor=None): #아마 리스트 형식으로 쿼리셋을 반환할 거에요
         json_memo_part = memo_serializer(memo) #memo에서 필요한 정보를 JSON으로 바꿔줍니다
         #근데 JSON으로 바꾸려고 하니까 딕셔너리에 추가할 때 오류가 발생해서 그냥 dic으로 반환
@@ -302,5 +308,23 @@ def email_result(request):
     data = task.get() # task의 return 값이지 않을까? 
     return JsonResponse(data,safe=False,status=201)
 
+
+@api_view(['POST']) 
+def s3_upload(request):
+    image = request.data['image'] # 우리가 DB에 저장할 때는 url을 넣어줄거야 url은 s3버킷에서 받아와
+     #TODO 1 사진을 s3 버킷에 올리기
+    s3=boto3.resource( #S3 버킷 등록하기
+        's3',
+        aws_access_key_id = AWS_ACCESS_KEY_ID,
+        aws_secret_access_key = AWS_SECRET_ACCESS_KEY,
+        config = Config(signature_version='s3v4') #이건 뭘까
+    )
+    random_number = str(uuid.uuid4())
+    s3.Bucket(AWS_STORAGE_BUCKET_NAME).put_object(Key=random_number, Body=image, ContentType='image/jpg')
+   
+    #TODO 2 사진 url을 받아옴
+    image_url = f"https://sangwon-bucket.s3.ap-northeast-1.amazonaws.com/{random_number}"
     
+    url = {"url":image_url}
+    return JsonResponse(url, status=200)
 

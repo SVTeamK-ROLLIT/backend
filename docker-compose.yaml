@@ -15,6 +15,13 @@ services:
       - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD","curl","-f","http://localhost:3306"]
+      interval: 10s
+      timeout: 15s #체크하는데 15초 이상 걸리면 체크 실패했다고 판단
+      retries: 5 #실패를 5번까지 체크해서 다 실패하면 unhealty판단
+      start_period: 10s # 잘 모르겟어요
+
 
   prometheus:
     container_name: prometheus
@@ -111,11 +118,10 @@ services:
        context: ./backend #수정
        
     ports: [] #이건 왜 비어있지?
-    depends_on: 
-      - backend 
-      - rabbitmq 
-      - mysqldb
+    
+    depends_on:
+       mysqldb: 
+           condition: service_healthy
     command: sh -c "celery -A backend worker --loglevel=info" #수정
     tty: true
-    restart: always
     

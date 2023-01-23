@@ -62,6 +62,8 @@ class Image(models.Model):
     create_at = models.DateTimeField(auto_now_add=True) 
     update_at = models.DateTimeField(auto_now=True) 
     is_deleted = models.IntegerField(default=1) 
+    width = models.IntegerField(null=True, default=200) 
+    height = models.IntegerField(null=True,default=100) 
 
 class DefaultSticker(models.Model):
     sticker_url = models.URLField(max_length=500) #url이 너무 길어서 글자 제한 늘림
