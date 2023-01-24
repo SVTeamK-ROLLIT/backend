@@ -1,39 +1,38 @@
-version: "3.8"
+version: '3.8'
 
 volumes:
   mysql_data:
   redisdata:
   prometheus_data: {}
   grafana_data: {}
-
+##
 services:
   mysqldb:
     build: ./db
     env_file:
-      - "./db/db.env"
+      - './db/db.env'
     ports:
-      - "3307:3306"
+      - '3307:3306'
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD","curl","-f","http://localhost:3306"]
+      test: ['CMD', 'curl', '-f', 'http://localhost:3306']
       interval: 10s
       timeout: 15s #체크하는데 15초 이상 걸리면 체크 실패했다고 판단
       retries: 5 #실패를 5번까지 체크해서 다 실패하면 unhealty판단
       start_period: 10s # 잘 모르겟어요
 
-
   prometheus:
     container_name: prometheus
     image: prom/prometheus:latest
     command:
-      - '--config.file=/etc/prometheus/prometheus.yml' 
+      - '--config.file=/etc/prometheus/prometheus.yml'
     volumes:
       - ./prometheus:/etc/prometheus/
       - ./prometheus.yml:/prometheus/prometheus.yml:ro
     ports:
       - 9090:9090
-  
+
   node-exporter:
     container_name: node-exporter
     image: prom/node-exporter
@@ -61,10 +60,10 @@ services:
     container_name: grafana
     image: grafana/grafana
     environment:
-      GF_INSTALL_PLUGINS: "grafana-clock-panel,grafana-simple-json-datasource"
-      GF_AUTH_ANONYMOUS_ENABLED: "true"
-      GF_AUTH_ANONYMOUS_ORG_ROLE: "Admin"
-      GF_AUTH_DISABLE_LOGIN_FORM: "true"
+      GF_INSTALL_PLUGINS: 'grafana-clock-panel,grafana-simple-json-datasource'
+      GF_AUTH_ANONYMOUS_ENABLED: 'true'
+      GF_AUTH_ANONYMOUS_ORG_ROLE: 'Admin'
+      GF_AUTH_DISABLE_LOGIN_FORM: 'true'
     volumes:
       - grafana_data:/var/lib/grafana
       - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
@@ -83,10 +82,9 @@ services:
                python manage.py loaddata fixture.json &&
                python manage.py runserver 0.0.0.0:8080" &&
     ports:
-      - "8080:8080"
+      - '8080:8080'
     volumes:
       - ./backend:/app
-  
 
   redis:
     container_name: redis_contain
@@ -95,11 +93,11 @@ services:
     # environment:
     #   - REDIS_PASSWORD='root'
     ports:
-      - "6379:6379" #이건 맞는거 같아
+      - '6379:6379' #이건 맞는거 같아
     volumes:
-      - 'redisdata:/data'    
+      - 'redisdata:/data'
     #   - /usr/local/etc/redis/redis.conf
-  
+
   rabbitmq:
     container_name: rabbitmq
     image: rabbitmq:latest #아마 될거야
@@ -107,21 +105,20 @@ services:
       - RABBITMQ_USER=guest
       - RABITMQ_PASSWORD=guset #막막하네
     ports:
-      - "5672:5672" #rabbitMQ default port
-      - "15672:15672" #UI를 위한 port 이건 뭐지?
+      - '5672:5672' #rabbitMQ default port
+      - '15672:15672' #UI를 위한 port 이건 뭐지?
     expose: #이건 뭐더라?
-      - "15672"
-    
+      - '15672'
+
   celery_worker:
     container_name: celery_worker
     build:
-       context: ./backend #수정
-       
+      context: ./backend #수정
+
     ports: [] #이건 왜 비어있지?
-    
+
     depends_on:
-       mysqldb: 
-           condition: service_healthy
+      mysqldb:
+        condition: service_healthy
     command: sh -c "celery -A backend worker --loglevel=info" #수정
     tty: true
-    
