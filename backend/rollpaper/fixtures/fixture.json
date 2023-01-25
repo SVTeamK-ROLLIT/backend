@@ -2,16 +2,117 @@
     {
         "model": "rollpaper.defaultsticker",
         "pk": 1,
-        "fields": {"sticker_url": "나무놀보"}
+        "fields": {"sticker_url": "https://sangwon-bucket.s3.ap-northeast-1.amazonaws.com/2e36fe83-a824-4f90-b176-871b05a1029a"}
     },
     {
         "model": "rollpaper.defaultsticker",
         "pk": 2,
-        "fields": {"sticker_url": "나무"}
+        "fields": {"sticker_url": "https://sangwon-bucket.s3.ap-northeast-1.amazonaws.com/d0f2ea92-affa-486e-aa46-1171d7919f44"}
     },
     {
         "model": "rollpaper.defaultsticker",
         "pk": 3,
-        "fields": {"sticker_url": "돌맹이"}
-    }
+        "fields": {"sticker_url": "https://sangwon-bucket.s3.ap-northeast-1.amazonaws.com/288d586a-14cc-477f-ab06-d084cfdc7c0b"}
+    },
+    {
+        "model": "rollpaper.defaultsticker",
+        "pk": 4,
+        "fields": {"sticker_url": "https://sangwon-bucket.s3.ap-northeast-1.amazonaws.com/969847b3-6dd6-48b0-8b0f-d381ddf7e616"}
+    },
+    
+    {
+        "model": "rollpaper.defaultsticker",
+        "pk": 5,
+        "fields": {"sticker_url": "https://sangwon-bucket.s3.ap-northeast-1.amazonaws.com/601b8e34-128a-4227-85dc-2a89444a9245"}
+    },
+    
+    {
+        "model": "rollpaper.defaultsticker",
+        "pk": 6,
+        "fields": {"sticker_url": "https://sangwon-bucket.s3.ap-northeast-1.amazonaws.com/d724e2e1-ada9-49dc-8511-9264780d47e4"}
+    },
+    
+    {
+        "model": "rollpaper.defaultsticker",
+        "pk": 7,
+        "fields": {"sticker_url": "https://sangwon-bucket.s3.ap-northeast-1.amazonaws.com/840d4146-804f-497c-86f1-2717f1200bcc"}
+    },
+    
+    {
+        "model": "rollpaper.defaultsticker",
+        "pk": 8,
+        "fields": {"sticker_url": "https://sangwon-bucket.s3.ap-northeast-1.amazonaws.com/9b352012-c7f1-40e7-83a9-f7e9c42c45c8"}
+    },
+    
+    {
+        "model": "rollpaper.defaultsticker",
+        "pk": 9,
+        "fields": {"sticker_url": "https://sangwon-bucket.s3.ap-northeast-1.amazonaws.com/1e419edb-b793-4e82-840c-da671ffdcfda"}
+    },
+    
+    {
+        "model": "rollpaper.defaultsticker",
+        "pk": 10,
+        "fields": {"sticker_url": "https://sangwon-bucket.s3.ap-northeast-1.amazonaws.com/26af89da-8cbb-436b-a444-f0339f974849"}
+    },
+    
+    {
+        "model": "rollpaper.defaultsticker",
+        "pk": 11,
+        "fields": {"sticker_url": "https://sangwon-bucket.s3.ap-northeast-1.amazonaws.com/d0300850-180e-4434-9833-86b17d4a77fa"}
+    },
+    
+    {
+        "model": "rollpaper.defaultsticker",
+        "pk": 12,
+        "fields": {"sticker_url": "https://sangwon-bucket.s3.ap-northeast-1.amazonaws.com/ac439d2b-af8c-4278-815e-ef204911a381"}
+    },
+    
+    {
+        "model": "rollpaper.defaultsticker",
+        "pk": 13,
+        "fields": {"sticker_url": "https://sangwon-bucket.s3.ap-northeast-1.amazonaws.com/7da87908-3bef-4b01-a14c-a20289ca5d6d"}
+    },
+    
+    {
+        "model": "rollpaper.defaultsticker",
+        "pk": 14,
+        "fields": {"sticker_url": "https://sangwon-bucket.s3.ap-northeast-1.amazonaws.com/1f7b116f-e07d-40b3-bb5a-d53faf47e5ef"}
+    },
+    
+    {
+        "model": "rollpaper.defaultsticker",
+        "pk": 15,
+        "fields": {"sticker_url": "https://sangwon-bucket.s3.ap-northeast-1.amazonaws.com/b5204215-0aa6-428b-82ff-8a88f73ea2e0"}
+    },
+    
+    {
+        "model": "rollpaper.defaultsticker",
+        "pk": 16,
+        "fields": {"sticker_url": "https://sangwon-bucket.s3.ap-northeast-1.amazonaws.com/fbb913b9-8799-47e5-a88a-37de249870bb"}
+    },
+    
+    {
+        "model": "rollpaper.defaultsticker",
+        "pk": 17,
+        "fields": {"sticker_url": "https://sangwon-bucket.s3.ap-northeast-1.amazonaws.com/341f243a-dffb-466b-89bd-17df6c1deaaf"}
+    },
+    
+    {
+        "model": "rollpaper.defaultsticker",
+        "pk": 18,
+        "fields": {"sticker_url": "https://sangwon-bucket.s3.ap-northeast-1.amazonaws.com/43cb9f07-1f93-4df1-b099-4f0d0de8ce33"}
+    },
+    
+    {
+        "model": "rollpaper.defaultsticker",
+        "pk": 19,
+        "fields": {"sticker_url": "https://sangwon-bucket.s3.ap-northeast-1.amazonaws.com/d43f2c50-6834-4bcb-8d29-c43b4d508663"}
+    },
+    
+    {
+        "model": "rollpaper.defaultsticker",
+        "pk": 20,
+        "fields": {"sticker_url": "https://sangwon-bucket.s3.ap-northeast-1.amazonaws.com/cf577db5-a451-4f0c-87de-1d421454b515"}
+    }  
 ]
