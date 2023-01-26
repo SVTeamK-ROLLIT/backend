@@ -279,9 +279,8 @@ def cartoon_id(request):
     return_data = {"task_id":task.id}
     return JsonResponse(return_data, status=201)  
 
-@api_view(['POST'])
-def cartoon_result(request):
-    task_id = request.data['task_id']
+@api_view(['GET'])
+def cartoon_result(request,task_id):
     task = AsyncResult(task_id) #작업 번호를 통해 작업상태 확인
     if not task.ready(): #아직 변환 완료 X
         return JsonResponse({'message':"still working"})

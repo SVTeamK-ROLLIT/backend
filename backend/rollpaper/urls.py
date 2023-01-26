@@ -36,7 +36,7 @@ urlpatterns = [
     path('papers/cartoons',views.cartoon_id),
     path('papers/sticker_list',views.get_stickers), #스티커 가져오기
     #path('papers/<int:paper_id>/<int:memo_id>/memoxy/', views.memo_xy), # 메모의 x, y좌표 정하기 #주소 끝에 '/'를 넣지 않으면 정상작동하지 않음
-    path('papers/cartoons/results',views.cartoon_result),
+    path('papers/cartoons/results/<str:task_id>',views.cartoon_result),
     path('users/papers/emails',views.email_id),
     path('users/papers/emails/results',views.email_result),
     path('photos',views.s3_upload) #s3에 이미지파일 올리면 url반환
