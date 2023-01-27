@@ -85,34 +85,21 @@
         "pk": 15,
         "fields": {"sticker_url": "https://sangwon-bucket.s3.ap-northeast-1.amazonaws.com/b5204215-0aa6-428b-82ff-8a88f73ea2e0"}
     },
-    
     {
         "model": "rollpaper.defaultsticker",
         "pk": 16,
-        "fields": {"sticker_url": "https://sangwon-bucket.s3.ap-northeast-1.amazonaws.com/fbb913b9-8799-47e5-a88a-37de249870bb"}
-    },
-    
-    {
-        "model": "rollpaper.defaultsticker",
-        "pk": 17,
-        "fields": {"sticker_url": "https://sangwon-bucket.s3.ap-northeast-1.amazonaws.com/341f243a-dffb-466b-89bd-17df6c1deaaf"}
-    },
-    
-    {
-        "model": "rollpaper.defaultsticker",
-        "pk": 18,
         "fields": {"sticker_url": "https://sangwon-bucket.s3.ap-northeast-1.amazonaws.com/43cb9f07-1f93-4df1-b099-4f0d0de8ce33"}
     },
     
     {
         "model": "rollpaper.defaultsticker",
-        "pk": 19,
+        "pk": 17,
         "fields": {"sticker_url": "https://sangwon-bucket.s3.ap-northeast-1.amazonaws.com/d43f2c50-6834-4bcb-8d29-c43b4d508663"}
     },
     
     {
         "model": "rollpaper.defaultsticker",
-        "pk": 20,
+        "pk": 18,
         "fields": {"sticker_url": "https://sangwon-bucket.s3.ap-northeast-1.amazonaws.com/cf577db5-a451-4f0c-87de-1d421454b515"}
     }  
 ]
