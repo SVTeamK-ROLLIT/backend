@@ -39,7 +39,9 @@ urlpatterns = [
     path('papers/cartoons/results/<str:task_id>',views.cartoon_result),
     path('users/papers/emails',views.email_id),
     path('users/papers/emails/results',views.email_result),
-    path('photos',views.s3_upload) #s3에 이미지파일 올리면 url반환
+    path('photos',views.s3_upload), #s3에 이미지파일 올리면 url반환
+    path('papers/images/<int:image_id>',views.image_delete),
+    path('papers/stickers/<int:sticker_id>',views.sticker_delete)
 ]
 
 if settings.DEBUG:

@@ -236,7 +236,7 @@ def get_paper(request,paper_id): #user_id는 쓰나?
         json_image_part = image_serializer(image) #딕셔너리 만들기
         dict["image"].append(json_image_part) #원본에 추가
     
-    for sticker in Sticker.objects.filter(paper_id=paper_id).exclude(xcoor = None, ycoor=None):
+    for sticker in Sticker.objects.filter(paper_id=paper_id, is_deleted=1).exclude(xcoor = None, ycoor=None):
         json_sticker_part = sticker_serializer(sticker)
         dict["sticker"].append(json_sticker_part)
     
@@ -327,3 +327,29 @@ def s3_upload(request):
     url = {"url":image_url}
     return JsonResponse(url, status=200)
 
+@api_view(['POST']) 
+def image_delete(request, image_id):
+    #TODO 1: 메모지 가져오기
+    image = Image.objects.get(pk=image_id)
+        
+    #TODO 2: 입력한 비밀번호와 메모의 비밀번호가 일치하는지 확인
+    if image.password == request.data['password']:
+        image.is_deleted = 0 
+        image.save()
+        return JsonResponse({"is_deleted":image.is_deleted}, status=200)
+    else:
+        return JsonResponse({"message": "delete fail"}, status=400)
+
+
+@api_view(['POST']) 
+def sticker_delete(request, sticker_id):
+    #TODO 1: 메모지 가져오기
+    sticker = Sticker.objects.get(pk=sticker_id)
+        
+    #TODO 2: 입력한 비밀번호와 메모의 비밀번호가 일치하는지 확인
+    if sticker.password == request.data['password']:
+        sticker.is_deleted = 0 
+        sticker.save()
+        return JsonResponse({"is_deleted":sticker.is_deleted}, status=200)
+    else:
+        return JsonResponse({"message": "delete fail"}, status=400)
