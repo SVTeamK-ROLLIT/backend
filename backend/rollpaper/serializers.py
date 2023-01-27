@@ -22,6 +22,7 @@ def PaperSerializer(paper_data):
 #짝퉁 시리어라이즈 : 딕셔너리로 만들어 줌
 def memo_serializer(memo_queryset):
     dic = {}
+    dic['memo_id'] = memo_queryset.id
     dic['content'] = memo_queryset.content
     dic['nickname'] = memo_queryset.nickname
     dic['password'] = memo_queryset.password
@@ -40,6 +41,7 @@ def memo_serializer(memo_queryset):
 
 def image_serializer(image_queryset):
     dic = {}
+    dic['image_id'] = image_queryset.id
     dic['password'] = image_queryset.password
     dic['xcoor'] = image_queryset.xcoor
     dic['ycoor'] = image_queryset.ycoor
@@ -53,6 +55,7 @@ def image_serializer(image_queryset):
 
 def sticker_serializer(sticker_queryset):
     dic = {}
+    dic['sticker_id'] = sticker_queryset.id
     dic['password'] = sticker_queryset.password
     dic['xcoor'] = sticker_queryset.xcoor
     dic['ycoor'] = sticker_queryset.ycoor
