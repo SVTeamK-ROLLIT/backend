@@ -75,4 +75,6 @@ class Sticker(models.Model):
     ycoor = models.IntegerField() 
     rotate = models.IntegerField() 
     password = models.CharField(max_length=20, null=True, default='') #구현하면서 추가
-    
+    create_at = models.DateTimeField(auto_now_add=True, null=False) 
+    update_at = models.DateTimeField(auto_now=True, null=False) 
+    is_deleted = models.IntegerField(default=1) 
