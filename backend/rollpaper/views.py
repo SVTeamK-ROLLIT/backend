@@ -131,6 +131,23 @@ def xyphotos(request,paper_id):
    
     return JsonResponse({"message": "img_info_added"}, status=200)
     
+@swagger_auto_schema(method="POST", request_body = PhotoXySerializer)
+@api_view(["POST"])
+def photo_xy(request):
+    #1. 메모 아이디 가져오기
+    image_id = request.data['image_id']
+    photo = Image.objects.get(pk=image_id)
+    #2. 메모의 좌표값 입력받기
+    photo.xcoor = request.data['xcoor']
+    photo.ycoor = request.data['ycoor']
+    photo.width = request.data['width']
+    photo.height = request.data['height']
+    photo.rotate = request.data['rotate']
+    #3. 입력받은 좌표값을 DB에 저장
+    photo.save()
+
+    return JsonResponse({"message":"success"},status=200)
+
 @swagger_auto_schema(method="POST", request_body = MemoSerializer)
 @api_view(['POST']) 
 def memo(request,paper_id):
@@ -155,28 +172,19 @@ def memo(request,paper_id):
     return JsonResponse({"memo_id": new_memo.id}, status=200)
 
 
-# @swagger_auto_schema(method="POST", request_body = MemoXySerializer)
-# @api_view(["POST"])
-# def memo_xy(request, paper_id, memo_id):
-#     #1. 메모 아이디 가져오기
-#     memo = Memo.objects.get(pk=memo_id)
-#     #2. 메모의 좌표값 입력받기
-#     memo.xcoor = request.data['xcoor']
-#     memo.ycoor = request.data['ycoor']
-#     #3. 입력받은 좌표값을 DB에 저장
-#     memo.save()
+@swagger_auto_schema(method="POST", request_body = MemoXySerializer)
+@api_view(["POST"])
+def memo_xy(request):
+    #1. 메모 아이디 가져오기
+    memo_id = request.data['memo_id']
+    memo = Memo.objects.get(pk=memo_id)
+    #2. 메모의 좌표값 입력받기
+    memo.xcoor = request.data['xcoor']
+    memo.ycoor = request.data['ycoor']
+    #3. 입력받은 좌표값을 DB에 저장
+    memo.save()
 
-#     #4. 롤링페이퍼에 저장되어있는 메모, 스티커, 이미지 사진 모두 반환
-#     memos = Memo.objects.filter(paper=paper_id, is_deleted=1).exclude(xcoor = None, ycoor=None)
-#     all_memos = list(memos.values())
-    
-#     stickers = Sticker.objects.filter(paper=paper_id)
-#     all_stickers = list(stickers.values())
-
-#     images = Image.objects.filter(paper=paper_id)
-#     all_images = list(images.values())
-
-#     return JsonResponse({"all_memo": all_memos, "all_sticker":all_stickers, "all_images":all_images},status=200)
+    return JsonResponse({"message":"success"},status=200)
 
     
 @swagger_auto_schema(method="POST", request_body = MemoDeleteSerializer)
@@ -214,6 +222,21 @@ def stickers(request,paper_id):
     return JsonResponse({"message": "sticker added"}, status=201)
     
     #실패하는 케이스는 생각을 못했고 사진을 가리면 안되는 느낌으로 추가구현하면 좋을 거 같습니다
+
+@swagger_auto_schema(method="POST", request_body = StickerXySerializer)
+@api_view(["POST"])
+def sticker_xy(request):
+    #1. 메모 아이디 가져오기
+    sticker_id = request.data['sticker_id']
+    sticker = Sticker.objects.get(pk=sticker_id)
+    #2. 메모의 좌표값 입력받기
+    sticker.xcoor = request.data['xcoor']
+    sticker.ycoor = request.data['ycoor']
+    #3. 입력받은 좌표값을 DB에 저장
+    sticker.save()
+
+    return JsonResponse({"message":"success"},status=200)
+
 
 @api_view(['GET'])
 def my_page(request, user_id):

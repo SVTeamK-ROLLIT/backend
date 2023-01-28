@@ -36,13 +36,16 @@ urlpatterns = [
     path('papers/<int:paper_id>/',views.get_paper), #paper의 memo,image,sticker의 정보를 가져옵니다
     path('papers/cartoons',views.cartoon_id),
     path('papers/sticker_list',views.get_stickers), #스티커 가져오기
-    #path('papers/<int:paper_id>/<int:memo_id>/memoxy/', views.memo_xy), # 메모의 x, y좌표 정하기 #주소 끝에 '/'를 넣지 않으면 정상작동하지 않음
     path('papers/cartoons/results/<str:task_id>/<int:paper_id>',views.cartoon_result),
     path('users/papers/emails',views.email_id),
     path('users/papers/emails/results',views.email_result),
     path('photos',views.s3_upload), #s3에 이미지파일 올리면 url반환
     path('papers/images/<int:image_id>',views.image_delete),
-    path('papers/stickers/<int:sticker_id>',views.sticker_delete)
+    path('papers/stickers/<int:sticker_id>',views.sticker_delete),
+    path('users/position/memos', views.memo_xy), # 메모의 x, y좌표 정하기
+    path('users/position/stickers', views.sticker_xy),
+    path('users/position/images', views.photo_xy)
+
 ]
 
 if settings.DEBUG:

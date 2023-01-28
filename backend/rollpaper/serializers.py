@@ -90,15 +90,20 @@ class PhotoSerializer(serializers.ModelSerializer):
         model = Image
         fields = ('image_url','xcoor','ycoor','rotate','password')
 
+class PhotoXySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Image
+        fields = ('xcoor','ycoor','width','height','rotate')
+
 class MemoSerializer(serializers.ModelSerializer):
     class Meta: #paper_id는 views.py에서 입력받으므로 serializer에서는 넣지 않음
         model = Memo
         fields = ('content','nickname', 'font','color', 'font_color', 'password', 'xcoor','ycoor')
 
-# class MemoXySerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Memo
-#         fields = ('xcoor','ycoor')
+class MemoXySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Memo
+        fields = ('xcoor','ycoor')
 
 class MemoDeleteSerializer(serializers.ModelSerializer):
     class Meta:
@@ -109,3 +114,8 @@ class StickerSerializer(serializers.ModelSerializer):
     class Meta: #paper_id는 views.py에서 입력받으므로 serializer에서는 넣지 않음
         model = Sticker
         fields = ('xcoor','ycoor','rotate','password')
+
+class StickerXySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Sticker
+        fields = ('xcoor','ycoor')
