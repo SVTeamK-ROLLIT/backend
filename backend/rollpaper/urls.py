@@ -28,6 +28,7 @@ urlpatterns = [
     path('users/<int:user_id>/papers',views.paper), #롤링페이퍼 만들기 <int:user_id> 추가함.
     path('users/signup',views.sign_up), #회원가입
     path('papers/<int:paper_id>/photos',views.photo),#사진 추가
+    path('papers/<int:paper_id>/xyphotos',views.xyphotos), #image 정보들 null값인거 채워넣기
     path('papers/<int:paper_id>/memos',views.memo), #메모 생성
     path('papers/memos/<int:memo_id>',views.memo_delete), #메모 삭제
     path('papers/<int:paper_id>/stickers',views.stickers), #스티커를 추가
@@ -36,7 +37,7 @@ urlpatterns = [
     path('papers/cartoons',views.cartoon_id),
     path('papers/sticker_list',views.get_stickers), #스티커 가져오기
     #path('papers/<int:paper_id>/<int:memo_id>/memoxy/', views.memo_xy), # 메모의 x, y좌표 정하기 #주소 끝에 '/'를 넣지 않으면 정상작동하지 않음
-    path('papers/cartoons/results/<str:task_id>',views.cartoon_result),
+    path('papers/cartoons/results/<str:task_id>/<int:paper_id>',views.cartoon_result),
     path('users/papers/emails',views.email_id),
     path('users/papers/emails/results',views.email_result),
     path('photos',views.s3_upload), #s3에 이미지파일 올리면 url반환
