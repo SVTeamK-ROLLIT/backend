@@ -66,7 +66,7 @@ def cartoonizer(requset): #셀러리에서 작업하는 부분
 
     cv2.waitKey()  
     cv2.destroyAllWindows() 
-    dictionary = {"url":image_url}
+    dictionary = {"image_url":image_url}
     return dictionary
     
 def email(request):

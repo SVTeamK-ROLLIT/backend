@@ -302,7 +302,7 @@ def cartoon_result(request,task_id,paper_id):
     data = task.get() # task의 return 값이지 않을까? 
     # 1/28 수정: image 객체 1개 만들고 pk 반환
     paper = Paper.objects.get(pk=paper_id)
-    new_photo = Image.objects.create(paper=paper, image_url=data['url'])
+    new_photo = Image.objects.create(paper=paper, image_url=data['image_url'])
     data['image_id'] = new_photo.id
     
     return JsonResponse(data,safe=False,status=201)
