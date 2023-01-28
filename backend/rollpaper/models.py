@@ -55,10 +55,10 @@ class Image(models.Model):
     paper = models.ForeignKey(Paper,on_delete=models.CASCADE) #paper_id로 저장
     image_url = models.URLField(max_length=200) #블로그 참고로 imageFiled -> FileField로 수정
     # JSON으로 만들 때 에러나서 다시 FileField에서 URLField로 수정
-    xcoor = models.IntegerField() 
-    ycoor = models.IntegerField() 
-    rotate = models.IntegerField() 
-    password = models.CharField(max_length=20) 
+    xcoor = models.IntegerField(default=0) 
+    ycoor = models.IntegerField(default=0) 
+    rotate = models.IntegerField(default=0) 
+    password = models.CharField(max_length=20,default=0) 
     create_at = models.DateTimeField(auto_now_add=True) 
     update_at = models.DateTimeField(auto_now=True) 
     is_deleted = models.IntegerField(default=1) 

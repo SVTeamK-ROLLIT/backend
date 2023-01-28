@@ -92,13 +92,8 @@ def paper(request, user_id):
 @api_view(['POST']) 
 def photo(request,paper_id):
     paper = Paper.objects.get(pk=paper_id) #paper_id는 url을 통해서 들어옴
-    xcoor = request.data['xcoor']
-    ycoor = request.data['ycoor']
-    rotate = request.data['rotate']
-    password = request.data['password']
     image = request.data['image'] # 우리가 DB에 저장할 때는 url을 넣어줄거야 url은 s3버킷에서 받아와
-    width = request.data['width']
-    height = request.data['height']
+    
 
     #TODO 1 사진을 s3 버킷에 올리기
     s3=boto3.resource( #S3 버킷 등록하기
@@ -113,12 +108,28 @@ def photo(request,paper_id):
     #TODO 2 사진 url을 받아옴
     image_url = f"https://sangwon-bucket.s3.ap-northeast-1.amazonaws.com/{random_number}"
 
-    #TODO 3 DB에 저장
-    new_photo = Image.objects.create(paper=paper, image_url=image_url, password=password,
-    xcoor=xcoor, ycoor=ycoor, rotate=rotate, width=width, height=height)
+    #TODO 3 DB에 저장 1/28 수정: paper랑 image_url만 넣어 나머지는 null
+    new_photo = Image.objects.create(paper=paper, image_url=image_url)
     
-    url = {"image_url":image_url}
+    url = {"image_id":new_photo.id, "image_url":image_url}
     return JsonResponse(url, status=200)
+
+@swagger_auto_schema(method="POST", request_body=PhotoSerializer)
+@api_view(['POST']) 
+def xyphotos(request,paper_id):
+    paper = Paper.objects.get(pk=paper_id) #paper_id는 url을 통해서 들어옴
+    image_id = request.data['image_id']
+    #TODO 1: image_id로 image 가져오기 -> 위의 값들로 수정
+    image = Image.objects.get(pk=image_id)
+    image.xcoor = request.data['xcoor']
+    image.ycoor = request.data['ycoor']
+    image.rotate = request.data['rotate']
+    image.password = request.data['password']
+    image.width = request.data['width']
+    image.height = request.data['height']
+    image.save()
+   
+    return JsonResponse({"message": "img_info_added"}, status=200)
     
 @swagger_auto_schema(method="POST", request_body = MemoSerializer)
 @api_view(['POST']) 
@@ -142,6 +153,7 @@ def memo(request,paper_id):
     nickname=nickname, font_color = font_color, password=password, xcoor=xcoor, ycoor=ycoor)
 
     return JsonResponse({"memo_id": new_memo.id}, status=200)
+
 
 # @swagger_auto_schema(method="POST", request_body = MemoXySerializer)
 # @api_view(["POST"])
@@ -282,12 +294,17 @@ def cartoon_id(request):
     return JsonResponse(return_data, status=201)  
 
 @api_view(['GET'])
-def cartoon_result(request,task_id):
+def cartoon_result(request,task_id,paper_id):
     task = AsyncResult(task_id) #작업 번호를 통해 작업상태 확인
     if not task.ready(): #아직 변환 완료 X
         return JsonResponse({'message':"still working"})
     #이게 뭐지? 일단 여기서 필터처리된 이미지url 받으면  좋을 거 같아
     data = task.get() # task의 return 값이지 않을까? 
+    # 1/28 수정: image 객체 1개 만들고 pk 반환
+    paper = Paper.objects.get(pk=paper_id)
+    new_photo = Image.objects.create(paper=paper, image_url=data['url'])
+    data['image_id'] = new_photo.id
+    
     return JsonResponse(data,safe=False,status=201)
 
 @api_view(['POST'])
