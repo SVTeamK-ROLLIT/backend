@@ -1,1 +1,32 @@
 # backend
+
+## 개발 서버 시작하기 
+```
+$ git clone https://github.com/2022-Winter-Bootcamp-Team-K/backend.git
+```
+## 환경변수
+* backend/.env
+```
+SECRET_KEY={DJANGO_SECERT_KEY}
+DEBUG=TRUE
+DATABASE_URL={DATABASE_URL}
+
+AWS_ACCESS_KEY_ID={AWS_ACCESS_KEY_ID}
+AWS_SECRET_ACCESS_KEY={AWS_SECRET_ACCESS_KEY}
+AWS_REGION={AWS_REGION}
+BUCKET_NAME={BUCKET_NAME}
+
+EMAIL_ADDR={EMAIL_ADDR}
+EMAIL_PASSWORD={EMAIL_PASSWORD}
+```
+
+* db/db.env
+```
+MYSQL_DATABASE={DATABASE_NAME}
+MYSQL_ROOT_USER={DATABASE_USER}
+MYSQL_ROOT_PASSWORD={DATABASE_PASSWORD}
+```
+## 실행하기
+```
+$docker compose up --build
+```
