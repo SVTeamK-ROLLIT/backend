@@ -330,6 +330,8 @@ def cartoon_result(request,task_id,paper_id):
     paper = Paper.objects.get(pk=paper_id)
     new_photo = Image.objects.create(paper=paper, image_url=data['image_url'])
     data['image_id'] = new_photo.id
+    new_photo.is_deleted = 0
+    new_photo.save()
     
     return JsonResponse(data,safe=False,status=201)
 
