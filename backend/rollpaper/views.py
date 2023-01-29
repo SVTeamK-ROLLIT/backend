@@ -110,6 +110,8 @@ def photo(request,paper_id):
 
     #TODO 3 DB에 저장 1/28 수정: paper랑 image_url만 넣어 나머지는 null
     new_photo = Image.objects.create(paper=paper, image_url=image_url)
+    new_photo.is_deleted = 0
+    new_photo.save()
     
     url = {"image_id":new_photo.id, "image_url":image_url}
     return JsonResponse(url, status=200)
@@ -127,6 +129,7 @@ def xyphotos(request,paper_id):
     image.password = request.data['password']
     image.width = request.data['width']
     image.height = request.data['height']
+    image.is_deleted = 1
     image.save()
    
     return JsonResponse({"message": "img_info_added"}, status=200)
