@@ -13,7 +13,7 @@ def UserSerializer(user_data):
 
 def PaperSerializer(paper_data):
     dic = {}
-    dic['user']=paper_data.user
+    dic['user']=paper_data.user_id
     dic['id'] = paper_data.id
     dic['title'] = paper_data.title
     dic['paper_url'] = paper_data.paper_url
