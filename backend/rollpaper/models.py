@@ -1,6 +1,5 @@
 # 모델  세이브
-
-
+import uuid
 from django.db import models
 
 # Create your models here.
@@ -17,6 +16,7 @@ class User(models.Model):
 
 
 class Paper(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User,on_delete=models.CASCADE) #user_id로 저장
     paper_url = models.URLField(max_length=100)
     title = models.CharField(max_length=20)
