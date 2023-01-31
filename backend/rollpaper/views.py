@@ -248,11 +248,11 @@ def my_page(request, user_id):
         json_user_part = UserSerializer(user_data)
         dict['user_data'].append(json_user_part)
 
-    for paper_data in Paper.objects.filter(user=user_id):
+    for paper_data in Paper.objects.filter(user=user_id).order_by('-update_at'):
         json_paper_part = PaperSerializer(paper_data)
         dict['paper_data'].append(json_paper_part)
 
-    return JsonResponse(dict, safe=False)
+    return JsonResponse(dict, safe=False) 
 
 @api_view(['GET'])
 def get_paper(request,paper_id): #user_id는 쓰나?
