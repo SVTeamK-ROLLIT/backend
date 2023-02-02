@@ -2,7 +2,7 @@
 
 ## 개발 서버 시작하기 
 ```
-$ git clone https://github.com/2022-Winter-Bootcamp-Team-K/backend.git
+$ https://github.com/SVTeamK-ROLLIT/backend.git
 ```
 ## 환경변수
 * backend/.env
